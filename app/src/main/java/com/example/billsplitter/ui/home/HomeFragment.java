@@ -30,7 +30,6 @@ public class HomeFragment extends Fragment {
     TabPagerAdapter myTabAdapter;
     ViewPager viewPager;
     TabLayout tabLayout;
-    private FragmentActivity myContext;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,7 +40,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        myContext=(FragmentActivity) context;
     }
 
     private HomeViewModel homeViewModel;
@@ -51,24 +49,21 @@ public class HomeFragment extends Fragment {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-       // final TextView textView = root.findViewById(R.id.text_home);
+
         viewPager = root.findViewById(R.id.viewPager);
         tabLayout = root.findViewById(R.id.tabLayout);
 
         setPagerAdapter();
         setTabLayout();
-        /*homeViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });*/
+
         return root;
     }
     private void setPagerAdapter() {
-        androidx.fragment.app.FragmentManager fragManager = myContext.getSupportFragmentManager();
+
+        androidx.fragment.app.FragmentManager fragManager = getChildFragmentManager();
         myTabAdapter = new TabPagerAdapter(fragManager);
         viewPager.setAdapter(myTabAdapter);
+        System.out.println("setPagerAdapter");
     }
 
     private void setTabLayout() {
@@ -76,7 +71,7 @@ public class HomeFragment extends Fragment {
 
         tabLayout.getTabAt(0).setText("Friends");
         tabLayout.getTabAt(1).setText("Groups");
+        System.out.println("setPagerAdapter");
     }
 
 }
-

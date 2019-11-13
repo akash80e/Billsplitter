@@ -1,5 +1,6 @@
 package com.example.billsplitter.ui.home;
 
+import java.io.Console;
 import java.util.ArrayList;
 
 import androidx.lifecycle.LiveData;
@@ -29,6 +30,7 @@ public class HomeViewModel extends ViewModel {
 
 
     private void setFriendsList(){
+        System.out.println("Hello");
         ArrayList<String> list = new ArrayList<>();
         list.add("Akash");
         list.add("Hardik");

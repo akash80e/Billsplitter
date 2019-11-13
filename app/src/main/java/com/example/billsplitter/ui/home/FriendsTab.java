@@ -31,6 +31,8 @@ public class FriendsTab extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
 
@@ -38,16 +40,14 @@ public class FriendsTab extends Fragment {
 
         final ListView listView = view.findViewById(R.id.friends_list);
 
-
         //Populating the friends list
         homeViewModel.getFriendsList().observe(this, new Observer<ArrayList<String>>() {
             @Override
             public void onChanged(ArrayList<String> strings) {
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, strings);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, strings);
                 listView.setAdapter(adapter);
             }
         });
-
 
         return view;
     }

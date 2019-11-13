@@ -31,6 +31,7 @@ public class GroupsTab extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
 
@@ -43,8 +44,9 @@ public class GroupsTab extends Fragment {
         homeViewModel.getGroupsList().observe(this, new Observer<ArrayList<String>>() {
             @Override
             public void onChanged(ArrayList<String> strings) {
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, strings);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, strings);
                 listView.setAdapter(adapter);
+
             }
         });
 
