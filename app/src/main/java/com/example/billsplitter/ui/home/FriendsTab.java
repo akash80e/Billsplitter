@@ -27,6 +27,7 @@ public class FriendsTab extends Fragment {
 
     private HomeViewModel homeViewModel;
 
+    private Integer imgId;
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -39,12 +40,20 @@ public class FriendsTab extends Fragment {
         View view = inflater.inflate(R.layout.friends_tab, container, false);
 
         final ListView listView = view.findViewById(R.id.friends_list);
+        imgId = R.drawable.profile_picture;
+
+        final ArrayList<String> subtitle = new ArrayList<>();
+        subtitle.add("owes");
+        subtitle.add("owes");
+        subtitle.add("owes");
+        subtitle.add("owes");
 
         //Populating the friends list
         homeViewModel.getFriendsList().observe(this, new Observer<ArrayList<String>>() {
             @Override
             public void onChanged(ArrayList<String> strings) {
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, strings);
+                CustomListView adapter = new CustomListView(getActivity(), strings, subtitle , imgId);
+                //ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, strings);
                 listView.setAdapter(adapter);
             }
         });
