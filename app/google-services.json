@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "208348355946-a0qv2lhfu17edgjrpj6fgc3a8k0p2nes.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.billsplitter",
+            "certificate_hash": "3f2d951f8ea54faf42aee49ad39928da62090cf2"
+          }
+        },
+        {
+          "client_id": "208348355946-01mlrahvudm61jd6cocfo1ufelvpgh6c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.billsplitter",
+            "certificate_hash": "ef42eb403ceee97f16bac77bfceeb01e5c4001ec"
+          }
+        },
+        {
           "client_id": "208348355946-6vt1idne56shp8rp5prq361bf8f2ksu1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
