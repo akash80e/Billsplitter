@@ -47,6 +47,7 @@ public class FriendsTab extends Fragment {
         subtitle.add("owes");
         subtitle.add("owes");
         subtitle.add("owes");
+        subtitle.add("owes");
 
         //Populating the friends list
         homeViewModel.getFriendsList().observe(this, new Observer<ArrayList<String>>() {
