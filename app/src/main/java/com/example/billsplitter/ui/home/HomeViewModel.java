@@ -1,11 +1,19 @@
 package com.example.billsplitter.ui.home;
 
-import java.io.Console;
-import java.util.ArrayList;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.example.billsplitter.ui.database.Users;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
 
 public class HomeViewModel extends ViewModel {
 
@@ -29,14 +37,33 @@ public class HomeViewModel extends ViewModel {
     }
 
 
+    /*
+    * This method is used to fetch the friends list from the database and set them
+    * to the arraylist to use later
+    * */
     private void setFriendsList(){
         System.out.println("Hello");
-        ArrayList<String> list = new ArrayList<>();
-        list.add("Akash");
-        list.add("Hardik");
-        list.add("Kethan");
-        list.add("Zeel");
-        mfriendsList.setValue(list);
+        final ArrayList<String> list = new ArrayList<>();
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("users/");
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot unit : dataSnapshot.getChildren()){
+                    Users value = unit.getValue(Users.class);
+
+                    list.add(StringUtils.capitalize(value.name));
+                }
+                mfriendsList.setValue(list);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
     }
 
     private void setGroupsList(){
