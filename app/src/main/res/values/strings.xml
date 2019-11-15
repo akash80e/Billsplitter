@@ -16,4 +16,16 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+
+    <string-array name="person">
+        <item>Akash</item>
+        <item>Hardik</item>
+        <item>Kethan</item>
+        <item>Zeel</item>
+    </string-array>
+
+    <string-array name="split_share">
+        <item>Equally</item>
+        <item>Unequally</item>
+    </string-array>
 </resources>
