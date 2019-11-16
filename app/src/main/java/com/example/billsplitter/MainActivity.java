@@ -52,10 +52,11 @@ public class MainActivity extends AppCompatActivity implements Serializable {
 
             if (resultCode == RESULT_OK) {
                 //Signed In
-                Toast.makeText(getApplicationContext(), "login", Toast.LENGTH_SHORT).show();
+
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                Toast.makeText(getApplicationContext(), "login : " + user.getEmail(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, HomeActivity.class);
-                //intent.putExtra("User", user);
+                intent.putExtra("User", user);
                 startActivity(intent);
 
             } else {
