@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.billsplitter.ui.database.Users;
+import com.example.billsplitter.ui.database.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,7 +52,7 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot unit : dataSnapshot.getChildren()){
-                    Users value = unit.getValue(Users.class);
+                    User value = unit.getValue(User.class);
 
                     list.add(StringUtils.capitalize(value.name));
                 }
