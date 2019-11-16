@@ -1,12 +1,14 @@
 package com.example.billsplitter.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
+import com.example.billsplitter.AddFriend;
 import com.example.billsplitter.R;
 
 import java.util.ArrayList;
@@ -19,14 +21,15 @@ public class FriendsTab extends Fragment {
 
     public FriendsTab() {}
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     private HomeViewModel homeViewModel;
 
+    private Button addFriend;
     private Integer imgId;
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -41,6 +44,15 @@ public class FriendsTab extends Fragment {
 
         final ListView listView = view.findViewById(R.id.friends_list);
         imgId = R.drawable.profile_picture;
+        addFriend = view.findViewById(R.id.addFriend);
+
+        addFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent =  new Intent(getContext(), AddFriend.class);
+                startActivity(intent);
+            }
+        });
 
         final ArrayList<String> subtitle = new ArrayList<>();
         subtitle.add("owes");
