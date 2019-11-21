@@ -1,6 +1,8 @@
 package com.example.billsplitter;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -24,12 +26,13 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     private static final int RC_SIGN_IN = 123;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference userTable = database.getReference("users/");
-
+    private static Context appContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        appContext = getApplicationContext();
         createSignInIntent();
     }
 
@@ -61,13 +64,19 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 //Signed In
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Toast.makeText(getApplicationContext(), "login : " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "login : " + user.getEmail() + " " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, HomeActivity.class);
-                intent.putExtra("User", user);
+
+                SharedPreferences sp = getSharedPreferences("Login", MODE_PRIVATE);
+                SharedPreferences.Editor ed = sp.edit();
+                ed.putString("UserName", user.getDisplayName());
+                ed.putString("UserEmail", user.getEmail());
+                ed.apply();
 
                 addUserToTheDatabaseIfNotExists(user);
 
                 startActivity(intent);
+                finish();
 
             } else {
                 //sign in failed
@@ -76,6 +85,9 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         }
     }
 
+    public static Context getAppContext(){
+        return appContext;
+    }
     private void addUserToDatabase(FirebaseUser userDetails) {
         User user = new User(userDetails.getDisplayName(), userDetails.getEmail());
 

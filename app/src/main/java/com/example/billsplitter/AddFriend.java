@@ -1,8 +1,12 @@
 package com.example.billsplitter;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.ContentResolver;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -23,12 +27,23 @@ public class AddFriend extends AppCompatActivity {
 
     private ListView result;
     private SearchView search;
+    private int MY_PERMISSIONS_REQUEST_READ_CONTACTS;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
         result = findViewById(R.id.contacts);
         search = findViewById(R.id.searchContact);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_CONTACTS},
+                    MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+
+
+        }
         loadContacts();
     }
     public void loadContacts(){

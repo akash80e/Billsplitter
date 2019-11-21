@@ -1,6 +1,9 @@
 package com.example.billsplitter.ui.home;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +16,8 @@ import com.example.billsplitter.R;
 
 import java.util.ArrayList;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -26,6 +31,7 @@ public class FriendsTab extends Fragment {
         super.onCreate(savedInstanceState);
 
     }
+    private int MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 
     private HomeViewModel homeViewModel;
 
@@ -44,15 +50,19 @@ public class FriendsTab extends Fragment {
 
         final ListView listView = view.findViewById(R.id.friends_list);
         imgId = R.drawable.profile_picture;
-        addFriend = view.findViewById(R.id.addFriend);
+        /*addFriend = view.findViewById(R.id.addFriend);
+
 
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent =  new Intent(getContext(), AddFriend.class);
-                startActivity(intent);
+
+
+                    Intent intent =  new Intent(getContext(), AddFriend.class);
+                    startActivity(intent);
+
             }
-        });
+        });*/
 
         final ArrayList<String> subtitle = new ArrayList<>();
         subtitle.add("owes");
@@ -60,6 +70,11 @@ public class FriendsTab extends Fragment {
         subtitle.add("owes");
         subtitle.add("owes");
         subtitle.add("owes");
+        subtitle.add("owes");
+        subtitle.add("owes");
+        subtitle.add("owes");
+
+
 
         //Populating the friends list
         homeViewModel.getFriendsList().observe(this, new Observer<ArrayList<String>>() {
@@ -73,4 +88,7 @@ public class FriendsTab extends Fragment {
 
         return view;
     }
+
+
+
 }

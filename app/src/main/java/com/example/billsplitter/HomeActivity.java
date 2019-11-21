@@ -1,8 +1,12 @@
 package com.example.billsplitter;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import com.example.billsplitter.ui.database.User;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -12,12 +16,15 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -25,12 +32,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+
+public class HomeActivity extends AppCompatActivity{
 
     private AppBarConfiguration mAppBarConfiguration;
-    private static final int RC_SIGN_IN = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +53,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), NewExpense.class);
                 startActivity(intent);
+                finish();
             }
         });
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
@@ -53,49 +64,56 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_activity,
-                R.id.nav_tools, R.id.nav_share, R.id.nav_log_out)
+                 R.id.nav_home, R.id.nav_gallery, R.id.nav_activity,
+                R.id.nav_tools, R.id.nav_share)
                 .setDrawerLayout(drawer)
                 .build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        setNavigationViewListener();
+        View headerLayout = navigationView.getHeaderView(0);
 
-        //Intent intent = getIntent();
-        //FirebaseUser user = (FirebaseUser) intent.getSerializableExtra("User");
-        //
-               // navigationView.getMenu().getItem(R.id.nav_log_out).setChecked();
+        TextView txt_email =  headerLayout.findViewById(R.id.user_email);
+        TextView txt_username =  headerLayout.findViewById(R.id.user_name);
 
-    }
 
-    private void setNavigationViewListener() {
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener((NavigationView.OnNavigationItemSelectedListener) this);
-    }
-    @Override
-    public boolean onNavigationItemSelected( MenuItem item) {
-        // Handle navigation view item clicks here.
-        switch (item.getItemId()) {
+        SharedPreferences sp = this.getSharedPreferences("Login", MODE_PRIVATE);
 
-            case R.id.nav_log_out: {
+        String user_name = sp.getString("UserName", null);
+        String user_email = sp.getString("UserEmail", null);
+
+
+        txt_email.setText(user_email);
+        txt_username.setText(user_name);
+        Button logOut = findViewById(R.id.logout);
+
+        logOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 AuthUI.getInstance()
-                        .signOut(this)
+                        .signOut(getApplicationContext())
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             public void onComplete(@NonNull Task<Void> task) {
                                 // user is now signed out
+                                SharedPreferences sp = getSharedPreferences("Login", MODE_PRIVATE);
+                                SharedPreferences.Editor ed = sp.edit();
+                                ed.putString("UserName", "");
+                                ed.putString("UserEmail", "");
+                                ed.apply();
+
                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 finish();
                             }
                         });
-                Toast.makeText(this, "Log out", Toast.LENGTH_SHORT).show();
-                break;
+                Toast.makeText(getApplicationContext(), "Log out", Toast.LENGTH_SHORT).show();
             }
-        }
-        //close navigation drawer
-        return true;
+        });
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -128,9 +146,4 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-    public void LogOut(){
-        Toast.makeText(this, "Log Out", Toast.LENGTH_SHORT).show();
-
-    }
-
 }
