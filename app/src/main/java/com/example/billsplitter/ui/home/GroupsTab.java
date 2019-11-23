@@ -38,7 +38,7 @@ public class GroupsTab extends Fragment {
         View view = inflater.inflate(R.layout.groups_tab, container, false);
 
         final ListView listView = view.findViewById(R.id.group_list);
-        imgId = R.drawable.group_icon;
+        imgId = R.drawable.ic_group_black_24dp;
 
         final ArrayList<String> subtitle = new ArrayList<>();
         subtitle.add("owes");
