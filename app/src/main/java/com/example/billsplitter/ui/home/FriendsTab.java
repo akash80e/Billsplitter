@@ -49,7 +49,7 @@ public class FriendsTab extends Fragment {
         View view = inflater.inflate(R.layout.friends_tab, container, false);
 
         final ListView listView = view.findViewById(R.id.friends_list);
-        imgId = R.drawable.profile_picture;
+        imgId = R.drawable.ic_person_black_24dp;
         /*addFriend = view.findViewById(R.id.addFriend);
 
 
