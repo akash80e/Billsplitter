@@ -1,12 +1,16 @@
 package com.example.billsplitter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.billsplitter.ui.database.User;
@@ -30,13 +34,12 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference userTable = database.getReference("users/");
     DatabaseReference expensesDataTable = database.getReference("expenses_data/");
-    private static Context appContext;
+    String UserID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        appContext = getApplicationContext();
         createSignInIntent();
     }
 
@@ -44,9 +47,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.PhoneBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build(),
-                new AuthUI.IdpConfig.FacebookBuilder().build());
+                new AuthUI.IdpConfig.GoogleBuilder().build());
 
                 // Create and launch sign-in intent
                 startActivityForResult(
@@ -75,6 +76,10 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 SharedPreferences.Editor ed = sp.edit();
                 ed.putString("UserName", user.getDisplayName());
                 ed.putString("UserEmail", user.getEmail());
+
+                String[] temp = user.getEmail().split("@");
+                UserID = temp[0];
+                ed.putString("UserId", UserID);
                 ed.apply();
 
                 addUserToTheDatabaseIfNotExists(user);
@@ -90,18 +95,16 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     }
 
     private void addUserToDatabase(FirebaseUser userDetails) {
-        User user = new User(userDetails.getDisplayName(), userDetails.getEmail());
+        User user = new User(userDetails.getDisplayName(), userDetails.getEmail(), UserID);
 
-        userTable.child(userDetails.getUid()).setValue(user);
+        userTable.child(UserID).setValue(user);
     }
 
     private void createGroupExpensesTable(FirebaseUser userDetails) {
-        expensesDataTable.child(userDetails.getUid()).child("group_expenses").child("isEmpty").setValue(true);
+        expensesDataTable.child(UserID).child("group_expenses").child("isEmpty").setValue(true);
     }
 
-    private void createIndividualExpensesTable(FirebaseUser userDetails){
-        expensesDataTable.child(userDetails.getUid()).child("individual_expenses").child("isEmpty").setValue(true);
-    }
+
 
     private void addUserToTheDatabaseIfNotExists(final FirebaseUser userDetails) {
         userTable.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -119,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 if (!isUserPresent) {
                     addUserToDatabase(userDetails);
                     createGroupExpensesTable(userDetails);
-                    createIndividualExpensesTable(userDetails);
+
                 }
             }
 

@@ -23,6 +23,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 public class FriendsTab extends Fragment {
+    ArrayList<String> friends;
+    ArrayList<String> amounts;
 
     public FriendsTab() {}
 
@@ -41,6 +43,9 @@ public class FriendsTab extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
+
+        friends = new ArrayList<>();
+        amounts = new ArrayList<>();
 
 
         homeViewModel =
@@ -64,28 +69,26 @@ public class FriendsTab extends Fragment {
             }
         });*/
 
-        final ArrayList<String> subtitle = new ArrayList<>();
-        subtitle.add("owes");
-        subtitle.add("owes");
-        subtitle.add("owes");
-        subtitle.add("owes");
-        subtitle.add("owes");
-        subtitle.add("owes");
-        subtitle.add("owes");
-        subtitle.add("owes");
-
-
 
         //Populating the friends list
         homeViewModel.getFriendsList().observe(this, new Observer<ArrayList<String>>() {
             @Override
             public void onChanged(ArrayList<String> strings) {
-                CustomListView adapter = new CustomListView(getActivity(), strings, subtitle , imgId);
-                //ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, strings);
-                listView.setAdapter(adapter);
+                friends = strings;
+
             }
         });
 
+        homeViewModel.getFriendsAmountList().observe(this, new Observer<ArrayList<String>>() {
+            @Override
+            public void onChanged(ArrayList<String> strings) {
+                amounts = strings;
+
+            }
+        });
+        CustomListView adapter = new CustomListView(getActivity(), friends, amounts , imgId);
+        //ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, strings);
+        listView.setAdapter(adapter);
         return view;
     }
 
