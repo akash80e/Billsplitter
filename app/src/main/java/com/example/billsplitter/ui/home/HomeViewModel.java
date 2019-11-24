@@ -19,6 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.billsplitter.MainActivity.getNameFromUserID;
+
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class HomeViewModel extends ViewModel {
@@ -74,19 +76,19 @@ public class HomeViewModel extends ViewModel {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                friends.clear();
+                amount.clear();
                 for (DataSnapshot unit : dataSnapshot.getChildren()){
                     if(unit.getKey().equals(userID)){
                         System.out.println(unit.child("individual_expenses"));
 
                         for(DataSnapshot child : unit.child("individual_expenses").getChildren()){
-                            friends.add(child.getKey());
+                            friends.add(getNameFromUserID(child.getKey()));
 
                             amount.add(child.getValue().toString());
                         }
-
                     }
-                    //System.out.println(unit.getValue());
-                    //list.add(StringUtils.capitalize(unit.getValue().toString()));
+
                 }
                 mfriendsList.setValue(friends);
                 mfriendsAmountList.setValue(amount);

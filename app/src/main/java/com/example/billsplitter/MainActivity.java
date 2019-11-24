@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements Serializable {
@@ -35,11 +36,13 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     DatabaseReference userTable = database.getReference("users/");
     DatabaseReference expensesDataTable = database.getReference("expenses_data/");
     String UserID;
+    static HashMap<String, String> userMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        userMap = new HashMap<>();
         createSignInIntent();
     }
 
@@ -95,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     }
 
     private void addUserToDatabase(FirebaseUser userDetails) {
-        User user = new User(userDetails.getDisplayName(), userDetails.getEmail(), UserID);
+        User user = new User(userDetails.getDisplayName(), userDetails.getEmail(), UserID, userMap);
 
         userTable.child(UserID).setValue(user);
     }
@@ -111,8 +114,14 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 boolean isUserPresent = false;
+                userMap.clear();
                 for (DataSnapshot unit : dataSnapshot.getChildren()){
                     User existingUserDetails = unit.getValue(User.class);
+
+                    //LookUp Table
+                    userMap.put(unit.getKey(), unit.child("name").getValue().toString());
+                    System.out.println("LoopUP TAble");
+                    System.out.println(userMap.get(unit.getKey()));
 
                     if(existingUserDetails.email.equalsIgnoreCase(userDetails.getEmail())) {
                         isUserPresent = true;
@@ -131,5 +140,12 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 System.out.println("The read failed: " + databaseError.getCode());
             }
         });
+    }
+
+    public static String getNameFromUserID(String userID)
+    {
+
+        return userMap.get(userID);
+
     }
 }

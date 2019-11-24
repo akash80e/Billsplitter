@@ -13,6 +13,7 @@ import android.widget.ListView;
 
 import com.example.billsplitter.AddFriend;
 import com.example.billsplitter.R;
+import com.example.billsplitter.ui.database.User;
 
 import java.util.ArrayList;
 
@@ -36,6 +37,7 @@ public class FriendsTab extends Fragment {
     private int MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 
     private HomeViewModel homeViewModel;
+    private ListView listView;
 
     private Button addFriend;
     private Integer imgId;
@@ -48,12 +50,13 @@ public class FriendsTab extends Fragment {
         amounts = new ArrayList<>();
 
 
+
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
 
         View view = inflater.inflate(R.layout.friends_tab, container, false);
 
-        final ListView listView = view.findViewById(R.id.friends_list);
+        listView = view.findViewById(R.id.friends_list);
         imgId = R.drawable.ic_person_black_24dp;
         /*addFriend = view.findViewById(R.id.addFriend);
 
@@ -69,12 +72,22 @@ public class FriendsTab extends Fragment {
             }
         });*/
 
+        amounts.add("owes");
+        amounts.add("owes");
+        amounts.add("owes");
+        amounts.add("owes");
+        amounts.add("owes");
+        amounts.add("owes");
+        amounts.add("owes");
+
 
         //Populating the friends list
         homeViewModel.getFriendsList().observe(this, new Observer<ArrayList<String>>() {
             @Override
             public void onChanged(ArrayList<String> strings) {
                 friends = strings;
+
+                updateList();
 
             }
         });
@@ -83,13 +96,19 @@ public class FriendsTab extends Fragment {
             @Override
             public void onChanged(ArrayList<String> strings) {
                 amounts = strings;
+                updateList();
 
             }
         });
+
+        return view;
+    }
+
+    private void updateList(){
+
         CustomListView adapter = new CustomListView(getActivity(), friends, amounts , imgId);
         //ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, strings);
         listView.setAdapter(adapter);
-        return view;
     }
 
 

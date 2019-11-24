@@ -221,10 +221,17 @@ public class NewExpense extends AppCompatActivity {
                     for (DataSnapshot unit : dataSnapshot.getChildren()) {
 
                         if (unit.getKey().equals(user_id)){
-                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(friendID).setValue(you);
+                            String preValue = unit.child("individual_expenses").child(friendID).getValue().toString();
+                            Double value = Double.parseDouble(preValue);
+                            value = value + Double.parseDouble(you);
+
+                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(friendID).setValue(String.valueOf(value));
                         }
                         else if (unit.getKey().equals(friendID)){
-                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(user_id).setValue(friend);
+                            String preValue = unit.child("individual_expenses").child(user_id).getValue().toString();
+                            Double value = Double.parseDouble(preValue);
+                            value = value + Double.parseDouble(friend);
+                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(user_id).setValue(value);
                         }
 
                     }
