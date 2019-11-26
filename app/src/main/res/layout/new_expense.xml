@@ -25,6 +25,7 @@
 
         <EditText
             android:id="@+id/describeitem"
+            android:inputType="text"
             android:hint="Describe an item"
             android:layout_width="220dp"
             android:layout_height="50dp"
@@ -56,23 +57,55 @@
             android:layout_width="220dp"
             android:layout_height="50dp"
             android:layout_marginLeft="30dp"
+            android:inputType="numberDecimal"
             android:hint="Enter an amount">
+        </EditText>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/middleLayout"
+        android:layout_marginTop="50dp"
+        android:layout_below="@id/secondLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp">
+
+        <ImageView
+            android:id="@+id/image_friend"
+            android:layout_width="35dp"
+            android:layout_height="49dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_person_add_black_24dp"
+            android:text="Item" />
+
+        <EditText
+            android:id="@+id/friend_username"
+            android:layout_width="220dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="30dp"
+            android:inputType="textEmailAddress"
+            android:hint="Enter friend's UserName">
         </EditText>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/third_layout"
-        android:layout_below="@id/secondLayout"
+        android:layout_below="@id/middleLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="50dp"
+        android:gravity="center_horizontal">
+
 
         <Button
             android:id="@+id/paidByButton"
+            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="70dp"
             android:text="Paid by ">
         </Button>
         <TextView
@@ -98,16 +131,16 @@
         android:layout_marginTop="50dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
 
 
         <Button
-            android:id="@+id/cancel"
-            android:text="Cancel"
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="70dp"
-            android:background="@color/colorRed">
+            android:id="@+id/upload_image"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:background="@drawable/camera"
+            >
         </Button>
 
         <Button
@@ -115,20 +148,11 @@
             android:text="Add item"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:background="@color/colorGreen">
+            android:layout_marginLeft="30dp">
         </Button>
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/temp_res"
-        android:layout_marginTop="500dp"
-        android:text="Hello"
-        android:layout_centerHorizontal="true">
-    </TextView>
 
 </RelativeLayout>
 

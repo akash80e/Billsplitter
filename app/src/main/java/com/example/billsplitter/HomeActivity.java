@@ -53,7 +53,6 @@ public class HomeActivity extends AppCompatActivity{
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), NewExpense.class);
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -84,10 +83,11 @@ public class HomeActivity extends AppCompatActivity{
 
         String user_name = sp.getString("UserName", null);
         String user_email = sp.getString("UserEmail", null);
+        String user_id = sp.getString("UserId", null);
 
 
         txt_email.setText(user_email);
-        txt_username.setText(user_name);
+        txt_username.setText(user_id);
         Button logOut = findViewById(R.id.logout);
 
         logOut.setOnClickListener(new View.OnClickListener() {
@@ -102,6 +102,7 @@ public class HomeActivity extends AppCompatActivity{
                                 SharedPreferences.Editor ed = sp.edit();
                                 ed.putString("UserName", "");
                                 ed.putString("UserEmail", "");
+                                ed.putString("UserId", "");
                                 ed.apply();
 
                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
