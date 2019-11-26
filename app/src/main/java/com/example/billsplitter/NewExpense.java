@@ -110,8 +110,12 @@ public class NewExpense extends AppCompatActivity {
                         }
 
                         System.out.println(selected);
-                        if (selected.equals("Your Friend")){
+                        if (selected.equals("Friend")){
                             paidByYou = false;
+                            paid.setText(R.string.paid_by_friend);
+                        }
+                        else{
+                            paid.setText(R.string.paid_by_you);
                         }
                     }
                 });
@@ -176,7 +180,6 @@ public class NewExpense extends AppCompatActivity {
             }
             cursor.close();
         }
-
     }
 
     public String getPath(Uri uri) {
@@ -212,38 +215,33 @@ public class NewExpense extends AppCompatActivity {
         System.out.println(user_id);
         System.out.println(friendID);
 
+        ExpenseTable = database.getReference("expenses_data/");
+        ExpenseTable.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot unit : dataSnapshot.getChildren()) {
 
-            ExpenseTable = database.getReference("expenses_data/");
+                    if (unit.getKey().equals(user_id)){
+                        String preValue = unit.child("individual_expenses").child(friendID).getValue().toString();
+                        Double value = Double.parseDouble(preValue);
+                        value = value + Double.parseDouble(you);
 
-            ExpenseTable.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot unit : dataSnapshot.getChildren()) {
-
-                        if (unit.getKey().equals(user_id)){
-                            String preValue = unit.child("individual_expenses").child(friendID).getValue().toString();
-                            Double value = Double.parseDouble(preValue);
-                            value = value + Double.parseDouble(you);
-
-                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(friendID).setValue(String.valueOf(value));
-                        }
-                        else if (unit.getKey().equals(friendID)){
-                            String preValue = unit.child("individual_expenses").child(user_id).getValue().toString();
-                            Double value = Double.parseDouble(preValue);
-                            value = value + Double.parseDouble(friend);
-                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(user_id).setValue(value);
-                        }
-
+                        ExpenseTable.child(unit.getKey()).child("individual_expenses").child(friendID).setValue(String.valueOf(value));
+                    }
+                    else if (unit.getKey().equals(friendID)){
+                        String preValue = unit.child("individual_expenses").child(user_id).getValue().toString();
+                        Double value = Double.parseDouble(preValue);
+                        value = value + Double.parseDouble(friend);
+                        ExpenseTable.child(unit.getKey()).child("individual_expenses").child(user_id).setValue(value);
                     }
                 }
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                }
-            });
-
-
+            }
+        });
 
     }
 /*

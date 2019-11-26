@@ -69,7 +69,6 @@ public class HomeViewModel extends ViewModel {
 
         SharedPreferences sp = context.getSharedPreferences("Login", MODE_PRIVATE);
         final String userID = sp.getString("UserId", null);
-        System.out.println("Fragment 101");
         System.out.println(userID);
         DatabaseReference ref = database.getReference("expenses_data/");
 
