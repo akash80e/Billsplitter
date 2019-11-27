@@ -35,10 +35,5 @@
         android:label="@string/menu_share"
         tools:layout="@layout/fragment_share" />
 
-    <fragment
-        android:id="@+id/nav_log_out"
-        android:name="com.example.billsplitter.ui.send.SendFragment"
-        android:label="@string/menu_log_out"
-        tools:layout="@layout/fragment_send" />
 
 </navigation>
