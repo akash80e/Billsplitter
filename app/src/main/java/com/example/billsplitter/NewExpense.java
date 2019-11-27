@@ -30,7 +30,6 @@ public class NewExpense extends AppCompatActivity {
         setContentView(R.layout.new_expense);
         database = FirebaseDatabase.getInstance().getReference("");
         paid = findViewById(R.id.paidByButton);
-        res = findViewById(R.id.temp_res);
         listItems = getResources().getStringArray(R.array.person);
         checkedItems = new boolean[listItems.length];
         paid.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +57,6 @@ public class NewExpense extends AppCompatActivity {
                         for (int j = 0; j < userItems.size(); j++){
                             people = people + userItems.get(j);
                         }
-                        res.setText(people);
                     }
                 });
                 AlertDialog mDialog = builder.create();

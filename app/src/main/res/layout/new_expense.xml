@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,18 +7,18 @@
 
     <LinearLayout
         android:id="@+id/first_layout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginLeft="30dp"
-        android:layout_marginTop="80dp">
+        android:layout_marginTop="80dp"
+        android:layout_centerHorizontal="true">
 
         <ImageView
             android:id="@+id/item_describe"
             android:layout_width="35dp"
             android:layout_height="40dp"
             android:layout_alignParentStart="true"
-            android:layout_marginLeft="10dp"
             android:src="@drawable/circular_image"
             android:text="Item" />
 
@@ -32,22 +31,21 @@
         </EditText>
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/secondLayout"
         android:layout_marginTop="50dp"
         android:layout_below="@id/first_layout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginLeft="30dp">
+        android:layout_centerHorizontal="true"
+        >
 
         <ImageView
             android:id="@+id/item_amount"
             android:layout_width="35dp"
             android:layout_height="49dp"
             android:layout_alignParentStart="true"
-            android:layout_marginLeft="10dp"
             android:src="@drawable/amount_image"
             android:text="Item" />
 
@@ -63,16 +61,16 @@
     <LinearLayout
         android:id="@+id/third_layout"
         android:layout_below="@id/secondLayout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp">
 
         <Button
             android:id="@+id/paidByButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="70dp"
             android:text="Paid by ">
         </Button>
         <TextView
@@ -96,18 +94,17 @@
         android:id="@+id/fourth_layout"
         android:layout_below="@id/third_layout"
         android:layout_marginTop="50dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true">
 
 
         <Button
             android:id="@+id/cancel"
             android:text="Cancel"
             android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="70dp"
-            android:background="@color/colorRed">
+            android:layout_height="wrap_content">
         </Button>
 
         <Button
@@ -115,20 +112,9 @@
             android:text="Add item"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:background="@color/colorGreen">
+            android:layout_marginLeft="30dp">
         </Button>
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/temp_res"
-        android:layout_marginTop="500dp"
-        android:text="Hello"
-        android:layout_centerHorizontal="true">
-    </TextView>
-
 </RelativeLayout>
-

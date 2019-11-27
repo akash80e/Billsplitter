@@ -53,7 +53,6 @@ public class HomeActivity extends AppCompatActivity{
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), NewExpense.class);
                 startActivity(intent);
-                finish();
             }
         });
 
