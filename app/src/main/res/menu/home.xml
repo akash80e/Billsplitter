@@ -6,4 +6,10 @@
         android:orderInCategory="100"
         android:title="@string/action_new_group"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/add_new_friend"
+        android:title="Add Friend"
+        app:showAsAction="never">
+    </item>
 </menu>

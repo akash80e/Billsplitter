@@ -1,5 +1,8 @@
 package com.example.billsplitter.ui.home;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -15,21 +18,37 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.billsplitter.MainActivity.getNameFromUserID;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 public class HomeViewModel extends ViewModel {
 
     private MutableLiveData<ArrayList<String>> mfriendsList;
+    private MutableLiveData<ArrayList<String>> mfriendsAmountList;
     private MutableLiveData<ArrayList<String>> mGroupsList;
+    private ArrayList<String> friends;
+    private ArrayList<String> amount;
+    private Context context;
 
     public HomeViewModel() {
         mfriendsList = new MutableLiveData<>();
         mGroupsList = new MutableLiveData<>();
+        mfriendsAmountList = new MutableLiveData<>();
+        context = getApplicationContext();
         setFriendsList();
         setGroupsList();
+
     }
 
 
     public LiveData<ArrayList<String>> getFriendsList(){
         return mfriendsList;
+    }
+
+    public LiveData<ArrayList<String>> getFriendsAmountList(){
+        return mfriendsAmountList;
     }
 
     public LiveData<ArrayList<String>> getGroupsList(){
@@ -43,20 +62,35 @@ public class HomeViewModel extends ViewModel {
     * */
     private void setFriendsList(){
         System.out.println("Hello");
-        final ArrayList<String> list = new ArrayList<>();
+        friends = new ArrayList<>();
+        amount = new ArrayList<>();
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("users/");
+
+        SharedPreferences sp = context.getSharedPreferences("Login", MODE_PRIVATE);
+        final String userID = sp.getString("UserId", null);
+        System.out.println(userID);
+        DatabaseReference ref = database.getReference("expenses_data/");
 
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                friends.clear();
+                amount.clear();
                 for (DataSnapshot unit : dataSnapshot.getChildren()){
-                    User value = unit.getValue(User.class);
+                    if(unit.getKey().equals(userID)){
+                        System.out.println(unit.child("individual_expenses"));
 
-                    list.add(StringUtils.capitalize(value.name));
+                        for(DataSnapshot child : unit.child("individual_expenses").getChildren()){
+                            friends.add(getNameFromUserID(child.getKey()));
+
+                            amount.add(child.getValue().toString());
+                        }
+                    }
+
                 }
-                mfriendsList.setValue(list);
+                mfriendsList.setValue(friends);
+                mfriendsAmountList.setValue(amount);
             }
 
             @Override

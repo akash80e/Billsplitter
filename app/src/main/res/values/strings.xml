@@ -17,11 +17,12 @@
     <string name="menu_share">Share</string>
     <string name="menu_log_out">Log Out</string>
 
+    <string name="paid_by_you">Paid by: You</string>
+    <string name="paid_by_friend">Paid by: Friend</string>
+
     <string-array name="person">
-        <item>Akash</item>
-        <item>Hardik</item>
-        <item>Kethan</item>
-        <item>Zeel</item>
+        <item>You</item>
+        <item>Friend</item>
     </string-array>
 
     <string-array name="split_share">

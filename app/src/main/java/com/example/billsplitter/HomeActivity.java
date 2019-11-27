@@ -1,6 +1,7 @@
 package com.example.billsplitter;
 
-import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -12,12 +13,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import android.text.Editable;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -25,6 +27,11 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -33,13 +40,17 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.zip.Inflater;
 
 public class HomeActivity extends AppCompatActivity{
 
     private AppBarConfiguration mAppBarConfiguration;
+    private DatabaseReference UserTable;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +94,11 @@ public class HomeActivity extends AppCompatActivity{
 
         String user_name = sp.getString("UserName", null);
         String user_email = sp.getString("UserEmail", null);
+        String user_id = sp.getString("UserId", null);
 
 
         txt_email.setText(user_email);
-        txt_username.setText(user_name);
+        txt_username.setText(user_id);
         Button logOut = findViewById(R.id.logout);
 
         logOut.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +113,7 @@ public class HomeActivity extends AppCompatActivity{
                                 SharedPreferences.Editor ed = sp.edit();
                                 ed.putString("UserName", "");
                                 ed.putString("UserEmail", "");
+                                ed.putString("UserId", "");
                                 ed.apply();
 
                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -134,6 +147,29 @@ public class HomeActivity extends AppCompatActivity{
                 return true;
 
             }
+            case R.id.add_new_friend:
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+                builder.setTitle("Enter the username");
+                final Context context = builder.getContext();
+                final LayoutInflater inflater = LayoutInflater.from(context);
+                final View view = inflater.inflate(R.layout.add_new_friend, null, false);
+//                LayoutInflater inflater = (HomeActivity.this).getLayoutInflater();
+//                View view = inflater.inflate(R.layout.add_new_friend, null);
+                final EditText editText = view.findViewById(R.id.newFriend);
+                //builder.setView(edittext);
+
+                builder.setPositiveButton("Add Friend", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String name = editText.getText().toString();
+                        addFriendToDb(name);
+
+                    }
+                });
+                builder.setView(view);
+                AlertDialog mDialog = builder.create();
+                mDialog.show();
+            }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -144,5 +180,34 @@ public class HomeActivity extends AppCompatActivity{
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+
+    private boolean addFriendToDb(final String friendID) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        UserTable = database.getReference("/users");
+
+
+        SharedPreferences sp = this.getSharedPreferences("Login", MODE_PRIVATE);
+        final String user_id = sp.getString("UserId", null);
+
+        UserTable.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot unit : dataSnapshot.getChildren()) {
+                    if (unit.getKey().equals(user_id)) {
+                        UserTable.child(user_id).child("Friends").child("userID").setValue(friendID);
+                    } else if (unit.getKey().equals(friendID)) {
+                        UserTable.child(friendID).child("Friends").child("userID").setValue(user_id);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return true;
     }
 }
