@@ -27,6 +27,11 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -34,14 +39,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.zip.Inflater;
 
-public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class HomeActivity extends AppCompatActivity{
 
     private AppBarConfiguration mAppBarConfiguration;
+    private DatabaseReference UserTable;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +162,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 builder.setPositiveButton("Add Friend", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String name = editText.getText().toString();
-                        Toast.makeText(getApplicationContext(),name,Toast.LENGTH_LONG).show();
+                        addFriendToDb(name);
+
                     }
                 });
                 builder.setView(view);
@@ -170,5 +180,34 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+
+    private boolean addFriendToDb(final String friendID) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        UserTable = database.getReference("/users");
+
+
+        SharedPreferences sp = this.getSharedPreferences("Login", MODE_PRIVATE);
+        final String user_id = sp.getString("UserId", null);
+
+        UserTable.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot unit : dataSnapshot.getChildren()) {
+                    if (unit.getKey().equals(user_id)) {
+                        UserTable.child(user_id).child("Friends").child("userID").setValue(friendID);
+                    } else if (unit.getKey().equals(friendID)) {
+                        UserTable.child(friendID).child("Friends").child("userID").setValue(user_id);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return true;
     }
 }
