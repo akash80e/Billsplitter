@@ -59,9 +59,7 @@ public class NewExpense extends AppCompatActivity {
         etAmount = findViewById(R.id.amount);
         etDescription = findViewById(R.id.describeitem);
         etUserName = findViewById(R.id.friend_username);
-
         paid = findViewById(R.id.paidByButton);
-
         addItem = findViewById(R.id.additem);
 
         Button imageUpload = findViewById(R.id.upload_image);
@@ -74,6 +72,7 @@ public class NewExpense extends AppCompatActivity {
                 startActivityForResult(photoPickerIntent, 1);
             }
         });
+
         listItems = getResources().getStringArray(R.array.person);
 
 
