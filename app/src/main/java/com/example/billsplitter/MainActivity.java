@@ -104,7 +104,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     }
 
     private void createGroupExpensesTable(FirebaseUser userDetails) {
-        expensesDataTable.child(UserID).child("group_expenses").child("isEmpty").setValue(true);
+        expensesDataTable.child(UserID).child("group_expenses");
+        expensesDataTable.child(UserID).child("individual_expenses");
     }
 
 

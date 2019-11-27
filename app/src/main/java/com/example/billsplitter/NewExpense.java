@@ -47,6 +47,7 @@ public class NewExpense extends AppCompatActivity {
     private String UserID;
     private String you;
     private String friend;
+    private Double value;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,16 +223,25 @@ public class NewExpense extends AppCompatActivity {
                 for (DataSnapshot unit : dataSnapshot.getChildren()) {
 
                     if (unit.getKey().equals(user_id)){
-                        String preValue = unit.child("individual_expenses").child(friendID).getValue().toString();
-                        Double value = Double.parseDouble(preValue);
-                        value = value + Double.parseDouble(you);
-
+                        if(unit.child("individual_expenses").child(friendID).getValue() != null) {
+                            String preValue = unit.child("individual_expenses").child(friendID).getValue().toString();
+                            value = Double.parseDouble(preValue);
+                            value = value + Double.parseDouble(you);
+                        }
+                        else{
+                            value = Double.parseDouble(you);
+                        }
                         ExpenseTable.child(unit.getKey()).child("individual_expenses").child(friendID).setValue(String.valueOf(value));
                     }
                     else if (unit.getKey().equals(friendID)){
-                        String preValue = unit.child("individual_expenses").child(user_id).getValue().toString();
-                        Double value = Double.parseDouble(preValue);
-                        value = value + Double.parseDouble(friend);
+                        if(unit.child("individual_expenses").child(user_id).getValue() != null) {
+                            String preValue = unit.child("individual_expenses").child(user_id).getValue().toString();
+                            value = Double.parseDouble(preValue);
+                            value = value + Double.parseDouble(friend);
+                        }
+                        else{
+                            value = Double.parseDouble(friend);
+                        }
                         ExpenseTable.child(unit.getKey()).child("individual_expenses").child(user_id).setValue(value);
                     }
                 }
