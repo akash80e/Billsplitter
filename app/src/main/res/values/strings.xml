@@ -19,6 +19,9 @@
 
     <string name="paid_by_you">Paid by: You</string>
     <string name="paid_by_friend">Paid by: Friend</string>
+    <string name="a_simler_way_to_manage_bills">A simpler way to manage bills</string>
+    <string name="todo">TODO</string>
+    <string name="bill_splitter">Bill Splitter</string>
 
     <string-array name="person">
         <item>You</item>
