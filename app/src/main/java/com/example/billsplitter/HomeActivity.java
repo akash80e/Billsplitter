@@ -44,12 +44,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.zip.Inflater;
+
+import static com.example.billsplitter.MainActivity.getNameFromUserID;
 
 public class HomeActivity extends AppCompatActivity{
 
     private AppBarConfiguration mAppBarConfiguration;
     private DatabaseReference UserTable;
+
+    private String userID;
+
+    private ArrayList<String> friendUserIDList;
+
 
 
     @Override
@@ -59,9 +67,11 @@ public class HomeActivity extends AppCompatActivity{
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent intent = new Intent(getApplicationContext(), NewExpense.class);
                 startActivity(intent);
             }
@@ -94,11 +104,11 @@ public class HomeActivity extends AppCompatActivity{
 
         String user_name = sp.getString("UserName", null);
         String user_email = sp.getString("UserEmail", null);
-        String user_id = sp.getString("UserId", null);
+        userID = sp.getString("UserId", null);
 
 
         txt_email.setText(user_email);
-        txt_username.setText(user_id);
+        txt_username.setText(userID);
         Button logOut = findViewById(R.id.logout);
 
         logOut.setOnClickListener(new View.OnClickListener() {
@@ -131,7 +141,7 @@ public class HomeActivity extends AppCompatActivity{
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
-
+        fetchFriends();
         return true;
     }
 
@@ -143,6 +153,7 @@ public class HomeActivity extends AppCompatActivity{
             case R.id.action_new_group:
             {
                 Intent intent = new Intent(this, NewGroup.class);
+                intent.putStringArrayListExtra("friends", friendUserIDList);
                 startActivity(intent);
                 return true;
 
@@ -188,17 +199,16 @@ public class HomeActivity extends AppCompatActivity{
         UserTable = database.getReference("/users");
 
 
-        SharedPreferences sp = this.getSharedPreferences("Login", MODE_PRIVATE);
-        final String user_id = sp.getString("UserId", null);
+
 
         UserTable.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot unit : dataSnapshot.getChildren()) {
-                    if (unit.getKey().equals(user_id)) {
-                        UserTable.child(user_id).child("Friends").child("userID").setValue(friendID);
+                    if (unit.getKey().equals(userID)) {
+                        UserTable.child(userID).child("Friends").child(friendID).setValue("true");
                     } else if (unit.getKey().equals(friendID)) {
-                        UserTable.child(friendID).child("Friends").child("userID").setValue(user_id);
+                        UserTable.child(friendID).child("Friends").child(userID).setValue("true");
                     }
                 }
             }
@@ -210,4 +220,36 @@ public class HomeActivity extends AppCompatActivity{
         });
         return true;
     }
+
+    private void fetchFriends() {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        UserTable = database.getReference("/users");
+        friendUserIDList = new ArrayList<>();
+
+
+        UserTable.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot unit : dataSnapshot.getChildren()) {
+                    if (unit.getKey().equals(userID)){
+                        for (DataSnapshot friend : unit.child("Friends").getChildren()){
+                            friendUserIDList.add(friend.getKey());
+
+                        }
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+
+
+
 }

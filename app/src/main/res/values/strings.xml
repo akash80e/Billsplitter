@@ -20,6 +20,10 @@
     <string name="paid_by_you">Paid by: You</string>
     <string name="paid_by_friend">Paid by: Friend</string>
 
+    <string name="create_new_group_button">Create Group</string>
+
+    <string name="add_friends">Add Friends</string>
+
     <string-array name="person">
         <item>You</item>
         <item>Friend</item>

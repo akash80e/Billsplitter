@@ -81,14 +81,13 @@
             android:src="@drawable/ic_person_add_black_24dp"
             android:text="Item" />
 
-        <EditText
-            android:id="@+id/friend_username"
+
+
+        <Spinner
+            android:id="@+id/list_friends"
+            android:layout_height="match_parent"
             android:layout_width="220dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="30dp"
-            android:inputType="textEmailAddress"
-            android:hint="Enter friend's UserName">
-        </EditText>
+            />
     </LinearLayout>
 
     <LinearLayout

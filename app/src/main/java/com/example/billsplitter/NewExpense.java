@@ -14,8 +14,12 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,6 +30,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import static com.example.billsplitter.MainActivity.getIdFromUserName;
+
+
 public class NewExpense extends AppCompatActivity {
     private Button paid;
     private Button split, addItem;
@@ -33,20 +40,26 @@ public class NewExpense extends AppCompatActivity {
     private boolean[] checkedItems;
     private String selected;
     private String friendPhoneNumber;
-    private String friendName;
     private EditText etDescription;
     private EditText etAmount;
-    private EditText etUserName;
+
     private ArrayList<String> userItems = new ArrayList<>();
+
+    private ArrayList<String> PaidList;
     private boolean paidByYou = true;
-    private ArrayList<String> users;
+
     private String[] listItems;
 
     private DatabaseReference ExpenseTable;
-    private DatabaseReference UserTable;
     private String UserID;
     private String you;
     private String friend;
+    private DatabaseReference FriendsAndGroups;
+    private ArrayAdapter<String> adapter;
+
+    private String selectedFriendOrGroup;
+    private Spinner sList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +67,8 @@ public class NewExpense extends AppCompatActivity {
         setContentView(R.layout.new_expense);
 
 
-
         etAmount = findViewById(R.id.amount);
         etDescription = findViewById(R.id.describeitem);
-        etUserName = findViewById(R.id.friend_username);
 
         paid = findViewById(R.id.paidByButton);
 
@@ -65,32 +76,80 @@ public class NewExpense extends AppCompatActivity {
 
         Button imageUpload = findViewById(R.id.upload_image);
 
-        imageUpload.setOnClickListener(new View.OnClickListener() {
+        SharedPreferences sp = this.getSharedPreferences("Login", MODE_PRIVATE);
+        UserID = sp.getString("UserId", null);
+
+        ArrayList<String> f = new ArrayList<>();
+
+        f = fetchGroup();
+
+
+        PaidList = new ArrayList<>();
+        PaidList.add("You");
+        //fetchGroup();
+
+
+         adapter = new ArrayAdapter<>(
+                NewExpense.this, android.R.layout.simple_list_item_1, f);
+
+
+        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sList =  findViewById(R.id.list_friends);
+        sList.setAdapter(adapter);
+
+
+        sList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                photoPickerIntent.setType("image/*");
-                startActivityForResult(photoPickerIntent, 1);
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplicationContext(),  sList.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
-        listItems = getResources().getStringArray(R.array.person);
-
-
-     /*   friend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_PICK);
-                i.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
-                startActivityForResult(i, 2);
-                paid.setEnabled(true);
-
-            }
-        });
-*/
 
         paid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                FriendsAndGroups = database.getReference("/expenses_data");
+
+
+                System.out.println(UserID);
+                System.out.println(sList.getSelectedItem());
+/*
+                FriendsAndGroups.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        for (DataSnapshot unit : dataSnapshot.child(UserID).child("group_expenses").getChildren()) {
+                            if (unit.getKey().equals(selectedFriendOrGroup)){
+                                for (DataSnapshot members : unit.getChildren()){
+                                    PaidList.add(members.getKey());
+                                    System.out.println(members.getKey());
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+               if (PaidList.size() < 2){
+                    PaidList.add(selectedFriendOrGroup);
+                }*/
+
+
+                listItems = new String[PaidList.size()];
+                for(int i=0;i<PaidList.size();i++){
+                    listItems[i] = PaidList.get(i);
+                }
+
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(NewExpense.this);
                 builder.setTitle("Paid by");
@@ -104,7 +163,7 @@ public class NewExpense extends AppCompatActivity {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String people = "";
+                        /*String people = "";
                         for (int j = 0; j < userItems.size(); j++){
                             people = people + userItems.get(j);
                         }
@@ -116,7 +175,7 @@ public class NewExpense extends AppCompatActivity {
                         }
                         else{
                             paid.setText(R.string.paid_by_you);
-                        }
+                        }*/
                     }
                 });
                 AlertDialog mDialog = builder.create();
@@ -129,8 +188,8 @@ public class NewExpense extends AppCompatActivity {
             public void onClick(View v) {
                 String desc = etDescription.getText().toString();
                 String amount = etAmount.getText().toString();
-                String friendUserName = etUserName.getText().toString();
-                addExpenseToDb(desc, amount, friendUserName);
+                //String friendUserName = etUserName.getText().toString();
+                //addExpenseToDb(desc, amount, friendUserName);
             }
         });
 
@@ -196,7 +255,7 @@ public class NewExpense extends AppCompatActivity {
 
 
     private void addExpenseToDb(String desc, String amount, final String friendID){
-        SharedPreferences sp = this.getSharedPreferences("Login", MODE_PRIVATE);
+
 
 
         Double splitAmount = Double.parseDouble(amount)/2;
@@ -210,9 +269,9 @@ public class NewExpense extends AppCompatActivity {
            you = "-" + amountFinal;
        }
 
-        final String user_id = sp.getString("UserId", null);
+
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        System.out.println(user_id);
+        System.out.println(UserID);
         System.out.println(friendID);
 
         ExpenseTable = database.getReference("expenses_data/");
@@ -221,7 +280,7 @@ public class NewExpense extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot unit : dataSnapshot.getChildren()) {
 
-                    if (unit.getKey().equals(user_id)){
+                    if (unit.getKey().equals(UserID)){
                         String preValue = unit.child("individual_expenses").child(friendID).getValue().toString();
                         Double value = Double.parseDouble(preValue);
                         value = value + Double.parseDouble(you);
@@ -229,10 +288,10 @@ public class NewExpense extends AppCompatActivity {
                         ExpenseTable.child(unit.getKey()).child("individual_expenses").child(friendID).setValue(String.valueOf(value));
                     }
                     else if (unit.getKey().equals(friendID)){
-                        String preValue = unit.child("individual_expenses").child(user_id).getValue().toString();
+                        String preValue = unit.child("individual_expenses").child(UserID).getValue().toString();
                         Double value = Double.parseDouble(preValue);
                         value = value + Double.parseDouble(friend);
-                        ExpenseTable.child(unit.getKey()).child("individual_expenses").child(user_id).setValue(value);
+                        ExpenseTable.child(unit.getKey()).child("individual_expenses").child(UserID).setValue(value);
                     }
                 }
             }
@@ -244,31 +303,41 @@ public class NewExpense extends AppCompatActivity {
         });
 
     }
-/*
-    private void getUserIDFromEmail(String Email) {
-        final String FriendEmail = Email;
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        UserTable = database.getReference("users/");
 
-        UserTable.addListenerForSingleValueEvent(new ValueEventListener() {
+
+    private ArrayList<String> fetchGroup() {
+
+        final ArrayList<String> friendsAndGroupsList = new ArrayList<>();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FriendsAndGroups = database.getReference("/expenses_data");
+
+        System.out.println(UserID);
+
+        FriendsAndGroups.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot unit : dataSnapshot.getChildren()) {
-                    System.out.println("Akash User");
-                    System.out.println(unit.getValue());
-                    if (unit.child("email").getValue().equals(FriendEmail)) {
-                        System.out.println("Found");
-                        UserID = unit.getKey();
-                        System.out.println(unit.getKey());
-
+                    if (unit.getKey().equals(UserID)){
+                        for (DataSnapshot group : unit.child("group_expenses").getChildren()){
+                            friendsAndGroupsList.add(group.getKey());
+                            System.out.println(group.getKey());
+                        }
+                        for (DataSnapshot friend : unit.child("individual_expenses").getChildren()){
+                            friendsAndGroupsList.add(friend.getKey());
+                            System.out.println(friend.getKey());
+                        }
                     }
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-    }*/
+
+        return friendsAndGroupsList;
+    }
+
 }
 

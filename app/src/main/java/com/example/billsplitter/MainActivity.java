@@ -27,7 +27,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements Serializable {
 
@@ -105,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
 
     private void createGroupExpensesTable(FirebaseUser userDetails) {
         expensesDataTable.child(UserID).child("group_expenses").child("isEmpty").setValue(true);
+        expensesDataTable.child(UserID).child("individual_expenses").child("isEmpty").setValue(true);
     }
 
 
@@ -144,8 +147,21 @@ public class MainActivity extends AppCompatActivity implements Serializable {
 
     public static String getNameFromUserID(String userID)
     {
-
         return userMap.get(userID);
-
     }
+
+
+    public static String getIdFromUserName(String userName){
+
+        String userId = null;
+        Iterator it =userMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            String val = pair.getValue().toString();
+            if (val.equals(userName))
+                userId = pair.getKey().toString();
+        }
+        return userId;
+    }
+
 }
