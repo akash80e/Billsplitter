@@ -54,13 +54,13 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build());
 
-                // Create and launch sign-in intent
-                startActivityForResult(
-                        AuthUI.getInstance()
-                                .createSignInIntentBuilder()
-                                .setAvailableProviders(providers)
-                                .build(),
-                        RC_SIGN_IN);
+        // Create and launch sign-in intent
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .build(),
+                RC_SIGN_IN);
     }
 
     @Override
@@ -111,14 +111,13 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     }
 
 
-
     private void addUserToTheDatabaseIfNotExists(final FirebaseUser userDetails) {
         userTable.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 boolean isUserPresent = false;
                 userMap.clear();
-                for (DataSnapshot unit : dataSnapshot.getChildren()){
+                for (DataSnapshot unit : dataSnapshot.getChildren()) {
                     User existingUserDetails = unit.getValue(User.class);
 
                     //LookUp Table
@@ -126,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                     System.out.println("LoopUP TAble");
                     System.out.println(userMap.get(unit.getKey()));
 
-                    if(existingUserDetails.email.equalsIgnoreCase(userDetails.getEmail())) {
+                    if (existingUserDetails.email.equalsIgnoreCase(userDetails.getEmail())) {
                         isUserPresent = true;
                     }
                 }
@@ -145,23 +144,17 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         });
     }
 
-    public static String getNameFromUserID(String userID)
-    {
+    public static String getNameFromUserID(String userID) {
         return userMap.get(userID);
     }
 
-
-    public static String getIdFromUserName(String userName){
-
-        String userId = null;
-        Iterator it =userMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            String val = pair.getValue().toString();
-            if (val.equals(userName))
-                userId = pair.getKey().toString();
+    public static String getIdFromUserName(String userName) {
+        String id = null;
+        for (Map.Entry<String, String> entry : userMap.entrySet()) {
+            if (entry.getValue().equals(userName)) {
+                id = entry.getKey();
+            }
         }
-        return userId;
+        return id;
     }
-
 }

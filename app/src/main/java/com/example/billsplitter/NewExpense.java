@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -21,19 +22,18 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.billsplitter.ui.home.FriendsTab;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.seismic.ShakeDetector;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-import static com.example.billsplitter.MainActivity.getIdFromUserName;
-
-
-public class NewExpense extends AppCompatActivity {
+public class NewExpense extends AppCompatActivity implements ShakeDetector.Listener {
     private Button paid;
     private Button split, addItem;
 
@@ -66,12 +66,14 @@ public class NewExpense extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_expense);
 
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        ShakeDetector shakeDetector = new ShakeDetector(NewExpense.this);
+        shakeDetector.start(sensorManager);
 
         etAmount = findViewById(R.id.amount);
         etDescription = findViewById(R.id.describeitem);
-
+        etUserName = findViewById(R.id.friend_username);
         paid = findViewById(R.id.paidByButton);
-
         addItem = findViewById(R.id.additem);
 
         Button imageUpload = findViewById(R.id.upload_image);
@@ -103,6 +105,9 @@ public class NewExpense extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(),  sList.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
             }
+        });
+
+        listItems = getResources().getStringArray(R.array.person);
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -304,10 +309,14 @@ public class NewExpense extends AppCompatActivity {
 
     }
 
-
-    private ArrayList<String> fetchGroup() {
-
-        final ArrayList<String> friendsAndGroupsList = new ArrayList<>();
+    @Override
+    public void hearShake() {
+        Intent intent = new Intent(NewExpense.this, HomeActivity.class);
+        startActivity(intent);
+    }
+/*
+    private void getUserIDFromEmail(String Email) {
+        final String FriendEmail = Email;
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         FriendsAndGroups = database.getReference("/expenses_data");
 
