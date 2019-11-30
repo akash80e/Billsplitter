@@ -32,4 +32,6 @@
         <item>Equally</item>
         <item>Unequally</item>
     </string-array>
+
+    <string name="settle">SETTLE UP</string>
 </resources>

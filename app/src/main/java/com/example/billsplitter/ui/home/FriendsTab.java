@@ -8,11 +8,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.billsplitter.AddFriend;
+import com.example.billsplitter.HomeActivity;
 import com.example.billsplitter.R;
+import com.example.billsplitter.SettleExpenses;
 import com.example.billsplitter.ui.database.User;
 
 import java.util.ArrayList;
@@ -106,9 +110,19 @@ public class FriendsTab extends Fragment {
 
     private void updateList(){
 
-        CustomListView adapter = new CustomListView(getActivity(), friends, amounts , imgId);
+        final CustomListView adapter = new CustomListView(getActivity(), friends, amounts , imgId);
         //ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, strings);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String item = adapter.getItem(i);
+                Intent intent = new Intent(getContext(), SettleExpenses.class);
+                intent.putExtra("UserName",item);
+                startActivity(intent);
+            }
+        });
     }
 
 
