@@ -27,6 +27,8 @@
 
     <string name="add_friends">Add Friends</string>
 
+    <string name="settle">SETTLE UP</string>
+
     <string-array name="person">
         <item>You</item>
         <item>Friend</item>
@@ -37,5 +39,5 @@
         <item>Unequally</item>
     </string-array>
 
-    <string name="settle">SETTLE UP</string>
+    <string name="add_friends_group">ADD FRIENDS</string>
 </resources>

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.view.View;
@@ -36,7 +37,7 @@ public class NewGroup extends AppCompatActivity {
     private ArrayList<String> userItems = new ArrayList<>();
 
     private String[] friends;
-
+    private String userID;
 
 
     private boolean[] checkedItems;
@@ -78,6 +79,8 @@ public class NewGroup extends AppCompatActivity {
 
         friendUserIDList = new ArrayList<>();
 
+        SharedPreferences sp = this.getSharedPreferences("Login", MODE_PRIVATE);
+        userID = sp.getString("UserId", null);
 
         friendUserIDList = getIntent().getStringArrayListExtra("friends");
         checkedItems = new boolean[friendUserIDList.size()];
@@ -142,7 +145,12 @@ public class NewGroup extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot unit : dataSnapshot.getChildren()){
                     if (friendUserIDList.contains(unit.getKey())){
-                        for(int i=0;i<friendUserIDList.size();i++){
+                        for(int i = 0; i < friendUserIDList.size(); i++){
+                            ExpensesTable.child(unit.getKey()).child("group_expenses").child(groupName).child(friendUserIDList.get(i)).setValue("0");
+                        }
+                    }
+                    else if (unit.getKey().equals(userID)){
+                        for(int i = 0; i < friendUserIDList.size(); i++){
                             ExpensesTable.child(unit.getKey()).child("group_expenses").child(groupName).child(friendUserIDList.get(i)).setValue("0");
                         }
                     }
