@@ -75,19 +75,11 @@
             android:layout_marginLeft="10dp"
             android:src="@drawable/ic_person_add_black_24dp"
             android:text="Item" />
-<<<<<<< app/src/main/res/layout/new_expense.xml
-
-
 
         <Spinner
             android:id="@+id/list_friends"
             android:layout_height="match_parent"
-=======
-        <EditText
-            android:id="@+id/friend_username"
->>>>>>> app/src/main/res/layout/new_expense.xml
-            android:layout_width="220dp"
-            />
+            android:layout_width="match_parent"/>
     </LinearLayout>
 
     <LinearLayout

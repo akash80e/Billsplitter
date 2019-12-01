@@ -59,6 +59,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
 
     private String selectedFriendOrGroup;
     private Spinner sList;
+    private ArrayList<String> friendsAndGroupsList;
 
 
     @Override
@@ -72,7 +73,6 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
 
         etAmount = findViewById(R.id.amount);
         etDescription = findViewById(R.id.describeitem);
-        etUserName = findViewById(R.id.friend_username);
         paid = findViewById(R.id.paidByButton);
         addItem = findViewById(R.id.additem);
 
@@ -83,7 +83,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
 
         ArrayList<String> f = new ArrayList<>();
 
-        f = fetchGroup();
+        //f = fetchGroup();
 
 
         PaidList = new ArrayList<>();
@@ -105,15 +105,16 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(),  sList.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
             }
-        });
-
-        listItems = getResources().getStringArray(R.array.person);
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
+
+        listItems = getResources().getStringArray(R.array.person);
+
+
 
         paid.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -314,9 +315,8 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         Intent intent = new Intent(NewExpense.this, HomeActivity.class);
         startActivity(intent);
     }
-/*
-    private void getUserIDFromEmail(String Email) {
-        final String FriendEmail = Email;
+
+    private void fetchGroup(String Email) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         FriendsAndGroups = database.getReference("/expenses_data");
 
@@ -345,7 +345,6 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
             }
         });
 
-        return friendsAndGroupsList;
     }
 
 }

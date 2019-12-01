@@ -22,7 +22,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import static com.example.billsplitter.MainActivity.getNameFromUserID;
-import static com.example.billsplitter.ui.util.GenerateUniqueId.getUniqueId;
 
 
 public class NewGroup extends AppCompatActivity {
