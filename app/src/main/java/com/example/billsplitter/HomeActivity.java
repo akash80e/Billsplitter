@@ -4,16 +4,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import com.example.billsplitter.ui.database.User;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +23,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,18 +41,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
-
-import static com.example.billsplitter.MainActivity.getNameFromUserID;
 
 public class HomeActivity extends AppCompatActivity{
-
     private AppBarConfiguration mAppBarConfiguration;
     private DatabaseReference UserTable;
+    private DatabaseReference ExpensesTable;
 
     private String userID;
 
     private ArrayList<String> friendUserIDList;
+    private DatabaseReference FriendsAndGroups;
+    private ArrayList<String> friendsAndGroupsList;
 
 
 
@@ -68,19 +63,14 @@ public class HomeActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = new Intent(getApplicationContext(), NewExpense.class);
-                startActivity(intent);
-            }
-        });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
+        friendsAndGroupsList = fetchFriendsAndGroup();
 
+
+        //System.out.println("asdalkshd" + friendsAndGroupsList.size());
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -110,6 +100,17 @@ public class HomeActivity extends AppCompatActivity{
         txt_email.setText(user_email);
         txt_username.setText(userID);
         Button logOut = findViewById(R.id.logout);
+
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(getApplicationContext(), NewExpense.class);
+                intent.putStringArrayListExtra("friends", friendsAndGroupsList);
+                startActivity(intent);
+            }
+        });
 
         logOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,7 +175,9 @@ public class HomeActivity extends AppCompatActivity{
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String name = editText.getText().toString();
                         addFriendToDb(name);
-
+                        addFriendExpensestoDb(name);
+                        Intent intent = new Intent(HomeActivity.this, HomeActivity.class);
+                        startActivity(intent);
                     }
                 });
                 builder.setView(view);
@@ -198,9 +201,6 @@ public class HomeActivity extends AppCompatActivity{
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         UserTable = database.getReference("/users");
 
-
-
-
         UserTable.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -221,11 +221,34 @@ public class HomeActivity extends AppCompatActivity{
         return true;
     }
 
+    private boolean addFriendExpensestoDb(final String friendID) {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        ExpensesTable = database.getReference("/expenses_data");
+
+        ExpensesTable.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot unit : dataSnapshot.getChildren()) {
+                    if (unit.getKey().equals(userID)) {
+                        ExpensesTable.child(userID).child("individual_expenses").child(friendID).setValue("0.0");
+                    } else if (unit.getKey().equals(friendID)) {
+                        ExpensesTable.child(friendID).child("individual_expenses").child(userID).setValue("0.0");
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return true;
+    }
+
     private void fetchFriends() {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         UserTable = database.getReference("/users");
         friendUserIDList = new ArrayList<>();
-
 
         UserTable.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -238,7 +261,6 @@ public class HomeActivity extends AppCompatActivity{
                         }
                     }
                 }
-
             }
 
             @Override
@@ -246,6 +268,39 @@ public class HomeActivity extends AppCompatActivity{
 
             }
         });
+    }
+
+    private ArrayList<String> fetchFriendsAndGroup() {
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FriendsAndGroups = database.getReference("/expenses_data");
+        final ArrayList<String> friendsAndGroupsList = new ArrayList<>();
+
+        System.out.println(userID);
+
+        FriendsAndGroups.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot unit : dataSnapshot.getChildren()) {
+                    if (unit.getKey().equals(userID)){
+                        for (DataSnapshot group : unit.child("group_expenses").getChildren()){
+                            friendsAndGroupsList.add(group.getKey());
+                            System.out.println(group.getKey());
+                        }
+                        for (DataSnapshot friend : unit.child("individual_expenses").getChildren()){
+                            friendsAndGroupsList.add(friend.getKey());
+                            System.out.println(friend.getKey());
+                            System.out.println("*******");
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return friendsAndGroupsList;
     }
 
 

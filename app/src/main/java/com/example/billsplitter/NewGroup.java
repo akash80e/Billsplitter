@@ -137,8 +137,6 @@ public class NewGroup extends AppCompatActivity {
 
         final String groupName = edGroupName.getText().toString();
 
-
-
         ExpensesTable.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

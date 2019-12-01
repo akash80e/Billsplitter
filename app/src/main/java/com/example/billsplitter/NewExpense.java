@@ -33,6 +33,10 @@ import com.squareup.seismic.ShakeDetector;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import static com.example.billsplitter.MainActivity.checkUser;
+import static com.example.billsplitter.MainActivity.getIdFromUserName;
+import static com.example.billsplitter.MainActivity.getNameFromUserID;
+
 public class NewExpense extends AppCompatActivity implements ShakeDetector.Listener {
     private Button paid;
     private Button split, addItem;
@@ -51,16 +55,18 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
     private String[] listItems;
 
     private DatabaseReference ExpenseTable;
+    private DatabaseReference FriendsAndGroups;
     private String UserID;
     private String you;
     private String friend;
-    private DatabaseReference FriendsAndGroups;
+
     private ArrayAdapter<String> adapter;
 
     private String selectedFriendOrGroup;
     private Spinner sList;
-    private ArrayList<String> friendsAndGroupsList;
 
+    private String PaidBy;
+    private String amountFinal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,29 +87,66 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         SharedPreferences sp = this.getSharedPreferences("Login", MODE_PRIVATE);
         UserID = sp.getString("UserId", null);
 
-        ArrayList<String> f = new ArrayList<>();
+        ArrayList<String> f= getIntent().getStringArrayListExtra("friends");
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FriendsAndGroups = database.getReference("/expenses_data");
 
-        //f = fetchGroup();
-
-
+        ArrayList<String> friendsAndGroups = new ArrayList<>();
+        for (int i=0;i<f.size();i++)
+        {
+            if (getNameFromUserID(f.get(i)).equals(""))
+            {
+                friendsAndGroups.add(f.get(i));
+            }
+            else {
+                friendsAndGroups.add(getNameFromUserID(f.get(i)));
+            }
+        }
         PaidList = new ArrayList<>();
-        PaidList.add("You");
-        //fetchGroup();
+
+        adapter = new ArrayAdapter<>(
+                NewExpense.this, android.R.layout.simple_list_item_1, friendsAndGroups);
 
 
-         adapter = new ArrayAdapter<>(
-                NewExpense.this, android.R.layout.simple_list_item_1, f);
-
-
-        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sList =  findViewById(R.id.list_friends);
         sList.setAdapter(adapter);
-
 
         sList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(),  sList.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+                selectedFriendOrGroup = sList.getSelectedItem().toString();
+                PaidList.clear();
+                PaidList.add("You");
+                if (!checkUser(selectedFriendOrGroup))
+                {
+                    FriendsAndGroups.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            for (DataSnapshot unit : dataSnapshot.child(UserID).child("group_expenses").getChildren()) {
+                                if (unit.getKey().equals(selectedFriendOrGroup)){
+                                    for (DataSnapshot members : unit.getChildren()){
+
+                                        if (!members.getKey().equals(UserID)){
+                                            PaidList.add(getNameFromUserID(members.getKey()));
+                                        }
+
+                                        System.out.println("**************" + members.getKey());
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
+                }
+                else
+                {
+                    PaidList.add(selectedFriendOrGroup);
+                }
             }
 
             @Override
@@ -112,43 +155,16 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
             }
         });
 
-        listItems = getResources().getStringArray(R.array.person);
-
-
 
         paid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final FirebaseDatabase database = FirebaseDatabase.getInstance();
-                FriendsAndGroups = database.getReference("/expenses_data");
+
+                selectedFriendOrGroup = sList.getSelectedItem().toString();
 
 
                 System.out.println(UserID);
                 System.out.println(sList.getSelectedItem());
-/*
-                FriendsAndGroups.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                        for (DataSnapshot unit : dataSnapshot.child(UserID).child("group_expenses").getChildren()) {
-                            if (unit.getKey().equals(selectedFriendOrGroup)){
-                                for (DataSnapshot members : unit.getChildren()){
-                                    PaidList.add(members.getKey());
-                                    System.out.println(members.getKey());
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-               if (PaidList.size() < 2){
-                    PaidList.add(selectedFriendOrGroup);
-                }*/
 
 
                 listItems = new String[PaidList.size()];
@@ -169,6 +185,8 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+
+
                         /*String people = "";
                         for (int j = 0; j < userItems.size(); j++){
                             people = people + userItems.get(j);
@@ -194,6 +212,14 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
             public void onClick(View v) {
                 String desc = etDescription.getText().toString();
                 String amount = etAmount.getText().toString();
+                Toast.makeText(getApplicationContext(), selected, Toast.LENGTH_SHORT).show();
+                if (checkUser(selectedFriendOrGroup)){
+                    addExpenseToDb(desc, amount, getIdFromUserName(selectedFriendOrGroup) );
+                }
+                else {
+                    addExpenseToDb(desc, amount,"");
+                }
+
                 //String friendUserName = etUserName.getText().toString();
                 //addExpenseToDb(desc, amount, friendUserName);
             }
@@ -261,52 +287,117 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
 
 
     private void addExpenseToDb(String desc, String amount, final String friendID){
+        Double splitAmount;
+        int number;
 
+        final String groupName = sList.getSelectedItem().toString();
 
+         PaidBy = selected;
+        if (PaidBy.equals("You")){
+            PaidBy = UserID;
+        }
+        else {
+            PaidBy = getIdFromUserName(selected);
+        }
 
-        Double splitAmount = Double.parseDouble(amount)/2;
-       final String amountFinal = String.valueOf(splitAmount);
-       if (paidByYou){
-            you = amountFinal;
-            friend = "-" + amountFinal;
-       }
-       else {
-           friend = amountFinal;
-           you = "-" + amountFinal;
-       }
+        boolean groupExpense = true;
+        if (friendID.equals("")){
+            number = PaidList.size();
+            splitAmount = Double.parseDouble(amount)/number;
+             amountFinal = String.valueOf(splitAmount);
+        }
+        else {
+            groupExpense = false;
+            number = 2;
+            splitAmount = Double.parseDouble(amount)/number;
+            amountFinal = String.valueOf(splitAmount);
+
+            if (paidByYou){
+                you = amountFinal;
+                friend = "-" + amountFinal;
+            }
+            else {
+                friend = amountFinal;
+                you = "-" + amountFinal;
+            }
+        }
 
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        System.out.println(UserID);
-        System.out.println(friendID);
 
         ExpenseTable = database.getReference("expenses_data/");
-        ExpenseTable.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot unit : dataSnapshot.getChildren()) {
 
-                    if (unit.getKey().equals(UserID)){
-                        String preValue = unit.child("individual_expenses").child(friendID).getValue().toString();
-                        Double value = Double.parseDouble(preValue);
-                        value = value + Double.parseDouble(you);
+        if (groupExpense){
+            ExpenseTable.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot unit : dataSnapshot.getChildren()) {
 
-                        ExpenseTable.child(unit.getKey()).child("individual_expenses").child(friendID).setValue(String.valueOf(value));
-                    }
-                    else if (unit.getKey().equals(friendID)){
-                        String preValue = unit.child("individual_expenses").child(UserID).getValue().toString();
-                        Double value = Double.parseDouble(preValue);
-                        value = value + Double.parseDouble(friend);
-                        ExpenseTable.child(unit.getKey()).child("individual_expenses").child(UserID).setValue(value);
+                        if (unit.getKey().equals(PaidBy)){
+
+                            for (DataSnapshot group : unit.child("group_expenses").child(groupName).getChildren())
+                            {
+                                String preValue = group.getValue().toString();
+                                Double value = Double.parseDouble(preValue);
+                                value = value + Double.parseDouble(amountFinal);
+
+                                ExpenseTable.child(unit.getKey()).child("group_expenses").child(groupName).child(group.getKey()).setValue(value);
+
+                            }
+                        }
+                        else if (PaidBy.contains(getNameFromUserID(unit.getKey()))) {
+
+                            for (DataSnapshot group : unit.child("group_expenses").child(groupName).getChildren())
+                            {
+                                String preValue = group.getValue().toString();
+                                Double value = Double.parseDouble(preValue);
+                                value = value - Double.parseDouble(amountFinal);
+
+                                ExpenseTable.child(unit.getKey()).child("group_expenses").child(groupName).child(group.getKey()).setValue(value);
+                            }
+
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+
+
+
+        }
+        else {
+            ExpenseTable.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot unit : dataSnapshot.getChildren()) {
+
+                        if (unit.getKey().equals(UserID)){
+                            String preValue = unit.child("individual_expenses").child(friendID).getValue().toString();
+                            Double value = Double.parseDouble(preValue);
+                            value = value + Double.parseDouble(you);
+
+                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(friendID).setValue(String.valueOf(value));
+                        }
+                        else if (unit.getKey().equals(friendID)){
+                            String preValue = unit.child("individual_expenses").child(UserID).getValue().toString();
+                            Double value = Double.parseDouble(preValue);
+                            value = value + Double.parseDouble(friend);
+                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(UserID).setValue(value);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
 
     }
 
@@ -316,36 +407,6 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         startActivity(intent);
     }
 
-    private void fetchGroup(String Email) {
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        FriendsAndGroups = database.getReference("/expenses_data");
-
-        System.out.println(UserID);
-
-        FriendsAndGroups.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot unit : dataSnapshot.getChildren()) {
-                    if (unit.getKey().equals(UserID)){
-                        for (DataSnapshot group : unit.child("group_expenses").getChildren()){
-                            friendsAndGroupsList.add(group.getKey());
-                            System.out.println(group.getKey());
-                        }
-                        for (DataSnapshot friend : unit.child("individual_expenses").getChildren()){
-                            friendsAndGroupsList.add(friend.getKey());
-                            System.out.println(friend.getKey());
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }
 
 }
 

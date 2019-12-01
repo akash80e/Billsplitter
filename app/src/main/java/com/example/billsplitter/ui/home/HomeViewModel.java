@@ -27,18 +27,23 @@ public class HomeViewModel extends ViewModel {
 
     private MutableLiveData<ArrayList<String>> mfriendsList;
     private MutableLiveData<ArrayList<String>> mfriendsAmountList;
+    private MutableLiveData<ArrayList<String>> mgroupsAmountList;
     private MutableLiveData<ArrayList<String>> mGroupsList;
     private ArrayList<String> friends;
-    private ArrayList<String> amount;
+    private ArrayList<String> groups;
+    private ArrayList<String> amountFriends;
+    private ArrayList<String> amountGroups;
     private Context context;
+    private String UserID;
 
     public HomeViewModel() {
         mfriendsList = new MutableLiveData<>();
         mGroupsList = new MutableLiveData<>();
         mfriendsAmountList = new MutableLiveData<>();
+        mgroupsAmountList = new MutableLiveData<>();
         context = getApplicationContext();
         setFriendsList();
-        setGroupsList();
+        setGroupList();
 
     }
 
@@ -54,6 +59,9 @@ public class HomeViewModel extends ViewModel {
     public LiveData<ArrayList<String>> getGroupsList(){
         return mGroupsList;
     }
+    public LiveData<ArrayList<String>> getGroupsAmountList(){
+        return mgroupsAmountList;
+    }
 
 
     /*
@@ -61,9 +69,9 @@ public class HomeViewModel extends ViewModel {
     * to the arraylist to use later
     * */
     private void setFriendsList(){
-        System.out.println("Hello");
+
         friends = new ArrayList<>();
-        amount = new ArrayList<>();
+        amountFriends = new ArrayList<>();
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -76,7 +84,7 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 friends.clear();
-                amount.clear();
+                amountFriends.clear();
                 for (DataSnapshot unit : dataSnapshot.getChildren()){
                     if(unit.getKey().equals(userID)){
                         System.out.println(unit.child("individual_expenses"));
@@ -84,13 +92,12 @@ public class HomeViewModel extends ViewModel {
                         for(DataSnapshot child : unit.child("individual_expenses").getChildren()){
                             friends.add(getNameFromUserID(child.getKey()));
 
-                            amount.add(child.getValue().toString());
+                            amountFriends.add(child.getValue().toString());
                         }
                     }
-
                 }
                 mfriendsList.setValue(friends);
-                mfriendsAmountList.setValue(amount);
+                mfriendsAmountList.setValue(amountFriends);
             }
 
             @Override
@@ -100,13 +107,52 @@ public class HomeViewModel extends ViewModel {
         });
     }
 
-    private void setGroupsList(){
-        ArrayList<String> list = new ArrayList<>();
-        list.add("Group 1");
-        list.add("Group 2");
-        list.add("Group 3");
-        list.add("Group 4");
-        mGroupsList.setValue(list);
+    public void setGroupList(){
+
+        groups = new ArrayList<>();
+        amountGroups = new ArrayList<>();
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        SharedPreferences sp = context.getSharedPreferences("Login", MODE_PRIVATE);
+        final String userID = sp.getString("UserId", null);
+        DatabaseReference ref = database.getReference("expenses_data/");
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                groups.clear();
+                amountGroups.clear();
+                for (DataSnapshot unit : dataSnapshot.getChildren()){
+                    if(unit.getKey().equals(userID)){
+
+                        for(DataSnapshot child : unit.child("group_expenses").getChildren()){
+                            groups.add(child.getKey());
+
+                            System.out.println(child.getKey());
+                            Double dTotal = 0.0;
+
+                            for (DataSnapshot members : child.getChildren()){
+                                String value = members.getValue().toString();
+                                Double dValue = Double.parseDouble(value);
+                                dTotal += dValue;
+                            }
+                            amountGroups.add(dTotal.toString());
+                            System.out.println(dTotal);
+                        }
+                    }
+                }
+                mGroupsList.setValue(groups);
+                mgroupsAmountList.setValue(amountGroups);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
     }
+
+
 }
 

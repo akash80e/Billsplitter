@@ -1,13 +1,16 @@
 package com.example.billsplitter.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.billsplitter.R;
+import com.example.billsplitter.SettleExpenses;
 
 import java.util.ArrayList;
 
@@ -16,6 +19,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 public class GroupsTab extends Fragment {
+    ArrayList<String> groups;
+    ArrayList<String> amounts;
+
 
     public GroupsTab () {}
 
@@ -26,7 +32,7 @@ public class GroupsTab extends Fragment {
 
     private HomeViewModel homeViewModel;
     private Integer imgId;
-
+    private ListView listView;
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -36,29 +42,54 @@ public class GroupsTab extends Fragment {
                 ViewModelProviders.of(this).get(HomeViewModel.class);
 
         View view = inflater.inflate(R.layout.groups_tab, container, false);
+        groups = new ArrayList<>();
+        amounts = new ArrayList<>();
 
-        final ListView listView = view.findViewById(R.id.group_list);
+
+        listView = view.findViewById(R.id.group_list);
         imgId = R.drawable.ic_group_black_24dp;
-
-        final ArrayList<String> subtitle = new ArrayList<>();
-        subtitle.add("owes");
-        subtitle.add("owes");
-        subtitle.add("owes");
-        subtitle.add("owes");
 
 
         //Populating the friends list
         homeViewModel.getGroupsList().observe(this, new Observer<ArrayList<String>>() {
             @Override
             public void onChanged(ArrayList<String> strings) {
-                CustomListView adapter = new CustomListView(getActivity(), strings, subtitle, imgId);
-               // ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, strings);
-                listView.setAdapter(adapter);
+                groups = strings;
+                updateList();
+
+            }
+        });
+        //Populating the friends list
+        homeViewModel.getGroupsAmountList().observe(this, new Observer<ArrayList<String>>() {
+            @Override
+            public void onChanged(ArrayList<String> strings) {
+                amounts = strings;
+                updateList();
 
             }
         });
 
-
         return view;
     }
+
+    private void updateList(){
+
+        System.out.println(groups);
+        System.out.println(amounts);
+
+
+        final CustomListView adapter = new CustomListView(getActivity(), groups, amounts , imgId);
+        listView.setAdapter(adapter);
+
+        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String item = adapter.getItem(i);
+                Intent intent = new Intent(getContext(), SettleExpenses.class);
+                intent.putExtra("UserName",item);
+                startActivity(intent);
+            }
+        });*/
+    }
+
 }

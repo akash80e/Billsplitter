@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -145,7 +146,14 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     }
 
     public static String getNameFromUserID(String userID) {
+        if (!userMap.containsKey(userID)){
+            return "";
+        }
         return userMap.get(userID);
+    }
+
+    public static boolean checkUser(String userName){
+        return userMap.containsValue(userName);
     }
 
     public static String getIdFromUserName(String userName) {
@@ -157,4 +165,6 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         }
         return id;
     }
+
+
 }
