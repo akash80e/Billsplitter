@@ -90,9 +90,10 @@ public class HomeViewModel extends ViewModel {
                         System.out.println(unit.child("individual_expenses"));
 
                         for(DataSnapshot child : unit.child("individual_expenses").getChildren()){
-                            friends.add(getNameFromUserID(child.getKey()));
-
-                            amountFriends.add(child.getValue().toString());
+                            if (!child.getKey().equals("isEmpty")){
+                                friends.add(getNameFromUserID(child.getKey()));
+                                amountFriends.add(child.getValue().toString());
+                            }
                         }
                     }
                 }
@@ -127,18 +128,20 @@ public class HomeViewModel extends ViewModel {
                     if(unit.getKey().equals(userID)){
 
                         for(DataSnapshot child : unit.child("group_expenses").getChildren()){
-                            groups.add(child.getKey());
 
-                            System.out.println(child.getKey());
-                            Double dTotal = 0.0;
+                            if (!child.getKey().equals("isEmpty")){
+                                groups.add(child.getKey());
 
-                            for (DataSnapshot members : child.getChildren()){
-                                String value = members.getValue().toString();
-                                Double dValue = Double.parseDouble(value);
-                                dTotal += dValue;
+                                Double dTotal = 0.0;
+
+                                for (DataSnapshot members : child.getChildren()){
+                                    String value = members.getValue().toString();
+                                    Double dValue = Double.parseDouble(value);
+                                    dTotal += dValue;
+                                }
+                                amountGroups.add(dTotal.toString());
                             }
-                            amountGroups.add(dTotal.toString());
-                            System.out.println(dTotal);
+
                         }
                     }
                 }
