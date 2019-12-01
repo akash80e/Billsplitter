@@ -254,8 +254,8 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
 
             case GALLERY_SELECTED:
                 if(resultCode == RESULT_OK){
-                    Bitmap bitmap = (Bitmap) imageReturnedIntent.getExtras().get("data");
-                    expenseImage.setImageBitmap(bitmap);
+                    Uri selectedImage = imageReturnedIntent.getData();
+                    expenseImage.setImageURI(selectedImage);
                 }
                 break;
         }
@@ -463,7 +463,8 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent pickPhoto = new Intent(Intent.ACTION_PICK);
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(pickPhoto , 1);
                 mBottomSheetDialog.dismiss();
             }
