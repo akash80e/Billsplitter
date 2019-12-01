@@ -34,6 +34,8 @@ public class DisplayGroup extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private ArrayList<String> groupsMembers;
     private ArrayList<String> amounts;
+    private ArrayList<String> memberID;
+
     private Integer imgId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class DisplayGroup extends AppCompatActivity {
 
         groupsMembers = new ArrayList<>();
         amounts = new ArrayList<>();
+        memberID = new ArrayList<>();
         imgId = R.drawable.ic_person_black_24dp;
 
         final String group = getIntent().getStringExtra("groupName");
@@ -70,6 +73,7 @@ public class DisplayGroup extends AppCompatActivity {
                                         for(DataSnapshot members:userGroup.getChildren()){
                                             groupsMembers.add(MainActivity.getNameFromUserID(members.getKey()));
                                             amounts.add(members.getValue().toString());
+                                            memberID.add(members.getKey());
                                         }
                                     }
                                 }
@@ -105,14 +109,64 @@ public class DisplayGroup extends AppCompatActivity {
 
                 builder.setPositiveButton("Add Friend", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        String friend_id = editText.getText().toString();
+                        final String friend_id = editText.getText().toString();
+                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for(DataSnapshot unit: dataSnapshot.getChildren()){
+                                    if(unit.getKey().equals(my_id)){
+                                        for(DataSnapshot groups:unit.getChildren()){
+                                            if(groups.getKey().equals("group_expenses")){
+                                                for(DataSnapshot userGroup:groups.getChildren()){
 
+                                                    if(userGroup.getKey().equals(group)){
+                                                        databaseReference.child(unit.getKey()).child("group_expenses").child(group).child(friend_id).setValue("0.0");
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for(DataSnapshot unit: dataSnapshot.getChildren()){
+                                    if(unit.getKey().equals(friend_id)){
+                                        for(int i = 0; i < memberID.size(); i++){
+                                            databaseReference.child(unit.getKey()).child("group_expenses").child(group).child(memberID.get(i)).setValue("0.0");
+                                        }
+
+
+                                    }
+                                }
+                            }
+
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                        Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+                        startActivity(intent);
                     }
                 });
                 builder.setView(new_view);
                 AlertDialog mDialog = builder.create();
                 mDialog.show();
+
             }
+
         });
+
     }
 }
