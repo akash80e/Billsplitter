@@ -88,6 +88,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
     private String PaidBy;
     private String amountFinal;
     private final int CAMERA_SELECTED = 0, GALLERY_SELECTED = 1;
+    private boolean isImageSet = false;
     BottomSheetDialog mBottomSheetDialog;
     FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
     StorageReference storageReference = firebaseStorage.getReference();
@@ -247,7 +248,10 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                 else {
                     addExpenseToDb(desc, amount,"");
                 }
-                uploadImageToFirebase();
+
+                if (isImageSet == true) {
+                    uploadImageToFirebase();
+                }
                 //String friendUserName = etUserName.getText().toString();
                 //addExpenseToDb(desc, amount, friendUserName);
             }
@@ -518,6 +522,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         switch(requestCode) {
             case CAMERA_SELECTED:
                 if(resultCode == RESULT_OK){
+                    isImageSet = true;
                     Bitmap bitmap = (Bitmap) imageReturnedIntent.getExtras().get("data");
                     expenseImage.setImageBitmap(bitmap);
                 }
@@ -525,6 +530,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
 
             case GALLERY_SELECTED:
                 if(resultCode == RESULT_OK){
+                    isImageSet = true;
                     Uri selectedImage = imageReturnedIntent.getData();
                     expenseImage.setImageURI(selectedImage);
                 }
