@@ -69,11 +69,11 @@ public class ActivityViewModel extends ViewModel {
                 for(DataSnapshot unit : dataSnapshot.getChildren()){
                     if (unit.getKey().equals(userID)){
                         for (DataSnapshot expenses : unit.getChildren()){
-
-
-                            PaidBy.add(expenses.child("paidBy").getValue().toString());
-                            Item.add(expenses.child("desc").getValue().toString());
-                            Amount.add(expenses.child("amount").getValue().toString());
+                            if (!expenses.getKey().equals("isEmpty")){
+                                PaidBy.add(expenses.child("paidBy").getValue().toString());
+                                Item.add(expenses.child("desc").getValue().toString());
+                                Amount.add(expenses.child("amount").getValue().toString());
+                            }
                         }
                     }
 
