@@ -29,6 +29,10 @@
 
     <string name="settle">SETTLE UP</string>
 
+    <string name="add_friends_group">ADD FRIENDS</string>
+
+    <string name="add_expense">Add expense</string>
+
     <string-array name="person">
         <item>You</item>
         <item>Friend</item>
@@ -38,8 +42,4 @@
         <item>Equally</item>
         <item>Unequally</item>
     </string-array>
-
-    <string name="add_friends_group">ADD FRIENDS</string>
-
-    <string name="add_expense">Add expense</string>
 </resources>
