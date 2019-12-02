@@ -3,6 +3,22 @@ package com.example.billsplitter;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+import com.google.gson.Gson;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,6 +51,7 @@ public class DisplayGroup extends AppCompatActivity {
     private ArrayList<String> groupsMembers;
     private ArrayList<String> amounts;
     private ArrayList<String> memberID;
+    private ViewAdaptor adapter;
 
     private Integer imgId;
     @Override
@@ -42,8 +59,17 @@ public class DisplayGroup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_group);
 
+        //recycler view
+
+        final RecyclerView recyclerView= findViewById(R.id.recycler);
+        //final RecyclerView.Adapter adapter;
+        final RecyclerView.LayoutManager layoutManager;
+        final TextView textView;
+
+
+        //recycler view ends
+
         groupName = findViewById(R.id.group_name);
-        allMembers = findViewById(R.id.groupMembers);
         addFriend = findViewById(R.id.addPeople);
 
         groupsMembers = new ArrayList<>();
@@ -84,8 +110,22 @@ public class DisplayGroup extends AppCompatActivity {
 
                     }
                 }
-                final CustomListView adapter = new CustomListView(DisplayGroup.this, groupsMembers, amounts , imgId);
-                allMembers.setAdapter(adapter);
+                ArrayList<Card> final_list = new ArrayList<>();
+                for (int i = 0; i < groupsMembers.size();i++){
+                    final_list.add(new Card(R.drawable.profile_picture,groupsMembers.get(i)));
+                }
+                recyclerView.setHasFixedSize(true);
+              //  layoutManager = new LinearLayoutManager(getApplicationContext());
+                //adapter for getting cardsList
+                adapter = new ViewAdaptor(final_list);
+
+                recyclerView.setLayoutManager(new LinearLayoutManager(DisplayGroup.this));
+                recyclerView.setAdapter(adapter);
+
+               // ArrayList<Card> cardsList =  new ArrayList<>();
+
+                //final CustomListView adapter = new CustomListView(DisplayGroup.this, groupsMembers, amounts , imgId);
+                //allMembers.setAdapter(adapter);
             }
 
 
