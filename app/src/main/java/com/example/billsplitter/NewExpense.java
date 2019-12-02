@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,14 +27,23 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.billsplitter.ui.home.FriendsTab;
+import com.example.billsplitter.ui.util.GenerateUniqueId;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.seismic.ShakeDetector;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
@@ -74,6 +84,10 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
     private String amountFinal;
     private final int CAMERA_SELECTED = 0, GALLERY_SELECTED = 1;
     BottomSheetDialog mBottomSheetDialog;
+    FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+    StorageReference storageReference = firebaseStorage.getReference();
+    StorageReference expenseImagesRef = storageReference.child("expense_image");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,7 +241,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                 else {
                     addExpenseToDb(desc, amount,"");
                 }
-
+                uploadImageToFirebase();
                 //String friendUserName = etUserName.getText().toString();
                 //addExpenseToDb(desc, amount, friendUserName);
             }
@@ -239,26 +253,6 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                 openBottomSheet();
             }
         });
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
-
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        switch(requestCode) {
-            case CAMERA_SELECTED:
-                if(resultCode == RESULT_OK){
-                    Bitmap bitmap = (Bitmap) imageReturnedIntent.getExtras().get("data");
-                    expenseImage.setImageBitmap(bitmap);
-                }
-                break;
-
-            case GALLERY_SELECTED:
-                if(resultCode == RESULT_OK){
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    expenseImage.setImageURI(selectedImage);
-                }
-                break;
-        }
     }
 
     /*@Override
@@ -471,6 +465,42 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         });
     }
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        switch(requestCode) {
+            case CAMERA_SELECTED:
+                if(resultCode == RESULT_OK){
+                    Bitmap bitmap = (Bitmap) imageReturnedIntent.getExtras().get("data");
+                    expenseImage.setImageBitmap(bitmap);
+                }
+                break;
 
+            case GALLERY_SELECTED:
+                if(resultCode == RESULT_OK){
+                    Uri selectedImage = imageReturnedIntent.getData();
+                    expenseImage.setImageURI(selectedImage);
+                }
+                break;
+        }
+    }
+
+    private void uploadImageToFirebase(){
+        String imageName = StringUtils.join(new GenerateUniqueId().getUniqueId(), ".jpeg");
+        StorageReference newImageRef = expenseImagesRef.child(imageName);
+        expenseImage.setDrawingCacheEnabled(true);
+        expenseImage.buildDrawingCache();
+
+        Bitmap bitmap = ((BitmapDrawable) expenseImage.getDrawable()).getBitmap();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] data = byteArrayOutputStream.toByteArray();
+
+        UploadTask uploadTask = newImageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Image upload failed!", Toast.LENGTH_LONG);
+            }
+        });
+    }
 }
-
