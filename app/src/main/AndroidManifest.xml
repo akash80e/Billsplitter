@@ -10,16 +10,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".DisplayGroup"></activity>
-        <activity android:name=".NewExpense" />
-        <activity android:name=".SplashActivity">
+        <activity android:name=".NewExpense" android:label="@string/add_expense"/>
+        <activity android:name=".SplashActivity" android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SettleExpenses" />
-        <activity android:name=".NewGroup" />
+        <activity android:name=".SettleExpenses"/>
+        <activity android:name=".NewGroup" android:label="@string/action_new_group"/>
         <activity android:name=".AddFriend" />
         <activity
             android:name=".HomeActivity"
