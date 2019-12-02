@@ -17,21 +17,21 @@
         android:layout_centerHorizontal="true">
     </TextView>
 
-    <ListView
-        android:id="@+id/groupMembers"
-        android:layout_marginTop="50dp"
-        android:layout_width="match_parent"
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_height="wrap_content"
-        android:layout_below="@id/group_name"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="10.0sp">
-    </ListView>
+        android:layout_width="wrap_content"
+        android:padding="2dp"
+        android:id="@+id/recycler"
+        android:layout_below="@+id/group_name"
+        android:scrollbarSize="1dp"
+        android:scrollbars="vertical"
+        android:layout_marginTop="0dp"/>
 
     <Button
         android:id="@+id/addPeople"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/groupMembers"
+        android:layout_below="@id/recycler"
         android:text="@string/add_friends_group">
     </Button>
 </RelativeLayout>
