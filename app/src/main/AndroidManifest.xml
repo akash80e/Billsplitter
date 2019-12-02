@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.billsplitter">
-    <uses-permission-sdk-23 android:name="android.permission.READ_CONTACTS" android:protectionLevel="normal"/>
-    <uses-permission-sdk-23 android:name="android.permission.WRITE_CONTACTS" android:protectionLevel="normal"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/bill_splitter_icon"
@@ -10,24 +9,29 @@
         android:roundIcon="@mipmap/bill_splitter_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".NewExpense"></activity>
-
-        <activity android:name=".SplashActivity">
+        <activity android:name=".DisplayGroup"></activity>
+        <activity android:name=".NewExpense" android:label="@string/add_expense"/>
+        <activity android:name=".SplashActivity" android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SettleExpenses"></activity>
-        <activity android:name=".NewGroup"></activity>
-        <activity android:name=".AddFriend"></activity>
+        <activity android:name=".SettleExpenses"/>
+        <activity android:name=".NewGroup" android:label="@string/action_new_group"/>
+        <activity android:name=".AddFriend" />
         <activity
             android:name=".HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity android:name=".MainActivity">
-          
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".MainActivity"></activity>
     </application>
+    <uses-permission-sdk-23
+        android:name="android.permission.WRITE_CONTACTS"
+        android:protectionLevel="normal" />
+
+    <uses-permission-sdk-23
+        android:name="android.permission.READ_CONTACTS"
+        android:protectionLevel="normal" />
+
 </manifest>

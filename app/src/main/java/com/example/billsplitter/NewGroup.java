@@ -80,6 +80,8 @@ public class NewGroup extends AppCompatActivity {
 
         friendUserIDList = new ArrayList<>();
 
+        SharedPreferences sp = this.getSharedPreferences("Login", MODE_PRIVATE);
+        userID = sp.getString("UserId", null);
 
         friendUserIDList = getIntent().getStringArrayListExtra("friends");
         checkedItems = new boolean[friendUserIDList.size()];

@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.billsplitter.DisplayGroup;
 import com.example.billsplitter.R;
 import com.example.billsplitter.SettleExpenses;
 
@@ -90,6 +91,17 @@ public class GroupsTab extends Fragment {
                 startActivity(intent);
             }
         });*/
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String group_name = adapter.getItem(i);
+                Intent intent = new Intent(getContext(), DisplayGroup.class);
+                intent.putExtra("groupName",group_name);
+                startActivity(intent);
+
+            }
+        });
     }
 
 }

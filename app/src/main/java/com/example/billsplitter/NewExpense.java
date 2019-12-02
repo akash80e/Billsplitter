@@ -9,6 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,17 +21,29 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.billsplitter.ui.home.FriendsTab;
+import com.example.billsplitter.ui.util.GenerateUniqueId;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.seismic.ShakeDetector;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -49,6 +63,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
     private String friendPhoneNumber;
     private EditText etDescription;
     private EditText etAmount;
+    private ImageView expenseImage;
 
     private ArrayList<String> userItems = new ArrayList<>();
 
@@ -72,6 +87,12 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
 
     private String PaidBy;
     private String amountFinal;
+    private final int CAMERA_SELECTED = 0, GALLERY_SELECTED = 1;
+    BottomSheetDialog mBottomSheetDialog;
+    FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+    StorageReference storageReference = firebaseStorage.getReference();
+    StorageReference expenseImagesRef = storageReference.child("expense_image");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +107,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         etDescription = findViewById(R.id.describeitem);
         paid = findViewById(R.id.paidByButton);
         addItem = findViewById(R.id.additem);
+        expenseImage = findViewById(R.id.expense_image);
 
         Button imageUpload = findViewById(R.id.upload_image);
 
@@ -225,14 +247,21 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                 else {
                     addExpenseToDb(desc, amount,"");
                 }
-
+                uploadImageToFirebase();
                 //String friendUserName = etUserName.getText().toString();
                 //addExpenseToDb(desc, amount, friendUserName);
             }
         });
 
+        imageUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openBottomSheet();
+            }
+        });
     }
-    @Override
+
+    /*@Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
@@ -277,7 +306,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
             }
             cursor.close();
         }
-    }
+    }*/
 
     public String getPath(Uri uri) {
         int column_index;
@@ -455,6 +484,71 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         startActivity(intent);
     }
 
+    public void openBottomSheet(){
+        mBottomSheetDialog = new BottomSheetDialog(this);
+        View sheetView = this.getLayoutInflater().inflate(R.layout.select_expense_image_bottom_layout, null);
+        mBottomSheetDialog.setContentView(sheetView);
+        mBottomSheetDialog.show();
 
+        LinearLayout camera = sheetView.findViewById(R.id.camera_linear_layout);
+        LinearLayout gallery = sheetView.findViewById(R.id.gallery_linear_layout);
+
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(takePicture, 0);
+                mBottomSheetDialog.dismiss();
+            }
+        });
+
+        gallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto , 1);
+                mBottomSheetDialog.dismiss();
+            }
+        });
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        switch(requestCode) {
+            case CAMERA_SELECTED:
+                if(resultCode == RESULT_OK){
+                    Bitmap bitmap = (Bitmap) imageReturnedIntent.getExtras().get("data");
+                    expenseImage.setImageBitmap(bitmap);
+                }
+                break;
+
+            case GALLERY_SELECTED:
+                if(resultCode == RESULT_OK){
+                    Uri selectedImage = imageReturnedIntent.getData();
+                    expenseImage.setImageURI(selectedImage);
+                }
+                break;
+        }
+    }
+
+    private void uploadImageToFirebase(){
+        String imageName = StringUtils.join(new GenerateUniqueId().getUniqueId(), ".jpeg");
+        StorageReference newImageRef = expenseImagesRef.child(imageName);
+        expenseImage.setDrawingCacheEnabled(true);
+        expenseImage.buildDrawingCache();
+
+        Bitmap bitmap = ((BitmapDrawable) expenseImage.getDrawable()).getBitmap();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] data = byteArrayOutputStream.toByteArray();
+
+        UploadTask uploadTask = newImageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Image upload failed!", Toast.LENGTH_LONG);
+            }
+        });
+    }
 }
-

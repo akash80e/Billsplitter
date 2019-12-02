@@ -8,7 +8,7 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_new_group">Create New Group</string>
+    <string name="action_new_group">Create a group</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
@@ -27,6 +27,8 @@
 
     <string name="add_friends">Add Friends</string>
 
+    <string name="settle">SETTLE UP</string>
+
     <string-array name="person">
         <item>You</item>
         <item>Friend</item>
@@ -37,5 +39,7 @@
         <item>Unequally</item>
     </string-array>
 
-    <string name="settle">SETTLE UP</string>
+    <string name="add_friends_group">ADD FRIENDS</string>
+
+    <string name="add_expense">Add expense</string>
 </resources>

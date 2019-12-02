@@ -32,7 +32,7 @@ public class SplashActivity extends AppCompatActivity {
         appTitle.setTypeface(fontTitle);
         subtitle.setTypeface(fontSubtitle);
 
-        logoImage.setImageResource(R.drawable.imagelogo);
+        logoImage.setImageResource(R.drawable.bill_splitter_icon);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
