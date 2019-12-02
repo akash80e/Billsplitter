@@ -59,16 +59,6 @@ public class DisplayGroup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_group);
 
-        //recycler view
-
-        final RecyclerView recyclerView= findViewById(R.id.recycler);
-        //final RecyclerView.Adapter adapter;
-        final RecyclerView.LayoutManager layoutManager;
-        final TextView textView;
-
-
-        //recycler view ends
-
         groupName = findViewById(R.id.group_name);
         addFriend = findViewById(R.id.addPeople);
 
@@ -76,9 +66,10 @@ public class DisplayGroup extends AppCompatActivity {
         amounts = new ArrayList<>();
         memberID = new ArrayList<>();
         imgId = R.drawable.ic_person_black_24dp;
+        allMembers = findViewById(R.id.recycler);
 
         final String group = getIntent().getStringExtra("groupName");
-        groupName.setText(group);
+        groupName.setText(group.toUpperCase());
 
         databaseReference = FirebaseDatabase.getInstance().getReference("expenses_data");
         SharedPreferences sp = this.getSharedPreferences("Login", MODE_PRIVATE);
@@ -110,22 +101,22 @@ public class DisplayGroup extends AppCompatActivity {
 
                     }
                 }
-                ArrayList<Card> final_list = new ArrayList<>();
-                for (int i = 0; i < groupsMembers.size();i++){
-                    final_list.add(new Card(R.drawable.profile_picture,groupsMembers.get(i)));
-                }
-                recyclerView.setHasFixedSize(true);
-              //  layoutManager = new LinearLayoutManager(getApplicationContext());
-                //adapter for getting cardsList
-                adapter = new ViewAdaptor(final_list);
-
-                recyclerView.setLayoutManager(new LinearLayoutManager(DisplayGroup.this));
-                recyclerView.setAdapter(adapter);
+//                ArrayList<Card> final_list = new ArrayList<>();
+//                for (int i = 0; i < groupsMembers.size();i++){
+//                    final_list.add(new Card(R.drawable.profile_picture,groupsMembers.get(i)));
+//                }
+//                recyclerView.setHasFixedSize(true);
+//              //  layoutManager = new LinearLayoutManager(getApplicationContext());
+//                //adapter for getting cardsList
+//                adapter = new ViewAdaptor(final_list);
+//
+//                recyclerView.setLayoutManager(new LinearLayoutManager(DisplayGroup.this));
+//                recyclerView.setAdapter(adapter);
 
                // ArrayList<Card> cardsList =  new ArrayList<>();
 
-                //final CustomListView adapter = new CustomListView(DisplayGroup.this, groupsMembers, amounts , imgId);
-                //allMembers.setAdapter(adapter);
+                final CustomListView adapter = new CustomListView(DisplayGroup.this, groupsMembers, amounts , imgId);
+                allMembers.setAdapter(adapter);
             }
 
 
@@ -154,7 +145,7 @@ public class DisplayGroup extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 for(DataSnapshot unit: dataSnapshot.getChildren()){
-                                    if(unit.getKey().equals(my_id)){
+                                    if( (unit.getKey().equals(my_id)) ||  (memberID.contains(unit.getKey()))){
                                         for(DataSnapshot groups:unit.getChildren()){
                                             if(groups.getKey().equals("group_expenses")){
                                                 for(DataSnapshot userGroup:groups.getChildren()){
@@ -184,8 +175,6 @@ public class DisplayGroup extends AppCompatActivity {
                                         for(int i = 0; i < memberID.size(); i++){
                                             databaseReference.child(unit.getKey()).child("group_expenses").child(group).child(memberID.get(i)).setValue("0.0");
                                         }
-
-
                                     }
                                 }
                             }
