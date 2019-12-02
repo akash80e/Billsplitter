@@ -2,6 +2,7 @@ package com.example.billsplitter.ui.activity;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private ArrayList<String> mPaidBy;
     private ArrayList<String> mItem;
     private ArrayList<String> mAmount;
-    private Context context;
+    private Context mcontext;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView expenseDesc;
@@ -32,10 +33,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
     }
 
-    public MyAdapter(ArrayList<String> PaidBy, ArrayList<String> Item, ArrayList<String> Amount) {
+    public MyAdapter(ArrayList<String> PaidBy, ArrayList<String> Item, ArrayList<String> Amount, Context context) {
        mPaidBy = PaidBy;
        mItem = Item;
        mAmount = Amount;
+       mcontext = context;
     }
 
     //creating my views
@@ -54,16 +56,24 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         String paid = mPaidBy.get(position);
         String Item = mItem.get(position);
         String Amount = mAmount.get(position);
+        double dAmount = Double.parseDouble(Amount);
 
+
+        System.out.println("Negative sign check" + Amount);
+
+        SharedPreferences sp = mcontext.getSharedPreferences("Login", Context.MODE_PRIVATE);
+
+        String UserID = sp.getString("UserId", null);
 
        holder.expenseDesc.setText(getNameFromUserID(paid) + " added a new expense for " + Item);
 
-        if (Amount.charAt(0) == '-')
+        if (paid.equals(UserID))
         {
-            holder.expensePayment.setText("You owe -" + Amount + " to" + getNameFromUserID(paid));
+            holder.expensePayment.setText(getNameFromUserID(paid) + " owes you " + dAmount);
         }
         else {
-            holder.expensePayment.setText(getNameFromUserID(paid) + " owes you " + Amount);
+
+            holder.expensePayment.setText("You owe " + dAmount + " to " + getNameFromUserID(paid));
         }
 
 

@@ -1,6 +1,7 @@
 package com.example.billsplitter.ui.home;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,18 @@ public class CustomListView extends ArrayAdapter<String> {
 
         titleText.setText(maintitle.get(position));
         imageView.setImageResource(imgId);
+
         subText.setText(subtitle.get(position));
+        double amount = Double.parseDouble(subtitle.get(position));
+        if (amount < 0){
+            subText.setTextColor(Color.RED);
+        }
+        else {
+
+            subText.setTextColor(Color.parseColor("#16c7ad"));
+        }
+
+
         return rowView;
     }
 }

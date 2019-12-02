@@ -247,9 +247,12 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                 else {
                     addExpenseToDb(desc, amount,"");
                 }
-                uploadImageToFirebase();
+                //uploadImageToFirebase();
                 //String friendUserName = etUserName.getText().toString();
                 //addExpenseToDb(desc, amount, friendUserName);
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(intent);
+                
             }
         });
 
@@ -323,9 +326,10 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
 
     private void addExpenseToDb(String desc, String amount, final String friendID){
         Double splitAmount;
-        int number;
+        int number = 0;
 
         final String groupName = sList.getSelectedItem().toString();
+        final DecimalFormat df = new DecimalFormat("#.##");
 
          PaidBy = selected;
         if (PaidBy.equals("You")){
@@ -336,23 +340,23 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         }
         if (!PaidBy.equals(UserID)){
             PaidList.add(getNameFromUserID(UserID));
+            number--;
         }
 
         boolean groupExpense = true;
         if (friendID.equals("")){
-            number = PaidList.size();
+            number += PaidList.size();
             splitAmount = Double.parseDouble(amount)/number;
-            DecimalFormat df = new DecimalFormat("#.##");
             amountFinal = df.format(splitAmount);
         }
         else {
             groupExpense = false;
             number = 2;
             splitAmount = Double.parseDouble(amount)/number;
-            DecimalFormat df = new DecimalFormat("#.##");
+
             amountFinal = df.format(splitAmount);
 
-            if (paidByYou){
+            if (PaidBy.equals(UserID)){
                 you = amountFinal;
                 friend = "-" + amountFinal;
             }
@@ -374,41 +378,50 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
 
                     for (DataSnapshot unit : dataSnapshot.getChildren()) {
 
-                        if (unit.getKey().equals(PaidBy)){
+                        try{
+                            if (unit.getKey().equals(PaidBy)){
 
-                            for (DataSnapshot group : unit.child("group_expenses").child(groupName).getChildren())
-                            {
-                                String preValue = group.getValue().toString();
-                                Double value = Double.parseDouble(preValue);
-                                value = value + Double.parseDouble(amountFinal);
+                                for (DataSnapshot group : unit.child("group_expenses").child(groupName).getChildren())
+                                {
 
-                                ExpenseTable.child(unit.getKey()).child("group_expenses").child(groupName).child(group.getKey()).setValue(value.toString());
+                                    String preValue = String.valueOf(group.getValue());
+                                    double value = Double.parseDouble(preValue);
+                                    value = value + Double.parseDouble(amountFinal);
+
+                                    String write = df.format(value);
+
+                                    ExpenseTable.child(unit.getKey()).child("group_expenses").child(groupName).child(group.getKey()).setValue(write);
+                                }
                             }
-                        }
-                        else if (PaidList.contains(getNameFromUserID(unit.getKey()))) {
+                            else if (PaidList.contains(getNameFromUserID(unit.getKey()))) {
 
-                            for (DataSnapshot group : unit.child("group_expenses").child(groupName).getChildren())
-                            {
-                                if (group.getKey().equals(PaidBy)){
-                                    String preValue = group.getValue().toString();
-                                    Double value = Double.parseDouble(preValue);
-                                    value = value - Double.parseDouble(amountFinal);
+                                for (DataSnapshot group : unit.child("group_expenses").child(groupName).getChildren())
+                                {
+                                    if (group.getKey().equals(PaidBy)){
 
-                                    ExpenseTable.child(unit.getKey()).child("group_expenses").child(groupName).child(group.getKey()).setValue(value.toString());
+                                        String preValue = String.valueOf(group.getValue());
+                                        double value = Double.parseDouble(preValue);
+                                        value = value - Double.parseDouble(amountFinal);
+                                        String write = df.format(value);
+
+                                        ExpenseTable.child(unit.getKey()).child("group_expenses").child(groupName).child(group.getKey()).setValue(write);
+                                    }
+
                                 }
 
                             }
-
                         }
+                        catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
+
                     }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
                 }
             });
-
 
 
         }
@@ -419,17 +432,33 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                     for (DataSnapshot unit : dataSnapshot.getChildren()) {
 
                         if (unit.getKey().equals(UserID)){
-                            String preValue = unit.child("individual_expenses").child(friendID).getValue().toString();
-                            Double value = Double.parseDouble(preValue);
-                            value = value + Double.parseDouble(you);
 
-                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(friendID).setValue(value.toString());
+                                String preValue = String.valueOf(unit.child("individual_expenses").child(friendID).getValue());
+                                double value = Double.parseDouble(preValue);
+                                if (unit.getKey().equals(PaidBy)){
+                                    value = value + Double.parseDouble(amountFinal);
+                                }
+                                else {
+                                    value = value - Double.parseDouble(amountFinal);
+                                }
+
+                                String write = df.format(value);
+
+                                ExpenseTable.child(unit.getKey()).child("individual_expenses").child(friendID).setValue(write);
+
                         }
                         else if (unit.getKey().equals(friendID)){
-                            String preValue = unit.child("individual_expenses").child(UserID).getValue().toString();
-                            Double value = Double.parseDouble(preValue);
-                            value = value + Double.parseDouble(friend);
-                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(UserID).setValue(value.toString());
+                                String preValue = String.valueOf(unit.child("individual_expenses").child(UserID).getValue());
+                                double value = Double.parseDouble(preValue);
+                                if (unit.getKey().equals(PaidBy)){
+                                    value = value + Double.parseDouble(amountFinal);
+                                }
+                                else {
+                                    value = value - Double.parseDouble(amountFinal);
+                                }
+
+                                String write = df.format(value);
+                                ExpenseTable.child(unit.getKey()).child("individual_expenses").child(UserID).setValue(write);
                         }
                     }
                 }
