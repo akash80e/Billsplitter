@@ -1,5 +1,6 @@
 package com.example.billsplitter.ui.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ public class ActivityFragment extends Fragment {
     private ArrayList<String> PaidBy;
     private ArrayList<String> Item;
     private ArrayList<String> Amount;
+    private Context context;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class ActivityFragment extends Fragment {
         PaidBy = new ArrayList<>();
         Item = new ArrayList<>();
         Amount = new ArrayList<>();
+        context = getActivity();
 
 
         activityViewModel.getPaidByList().observe(this, new Observer<ArrayList<String>>() {
@@ -74,7 +77,7 @@ public class ActivityFragment extends Fragment {
     }
     private void setAdapter(){
 
-        mAdapter = new MyAdapter(PaidBy, Item, Amount);
+        mAdapter = new MyAdapter(PaidBy, Item, Amount, context );
         recycle_view.setAdapter(mAdapter);
     }
 }
