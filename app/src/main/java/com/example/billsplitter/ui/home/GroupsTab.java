@@ -59,6 +59,7 @@ public class GroupsTab extends Fragment {
 
             }
         });
+
         //Populating the friends list
         homeViewModel.getGroupsAmountList().observe(this, new Observer<ArrayList<String>>() {
             @Override
@@ -76,7 +77,6 @@ public class GroupsTab extends Fragment {
 
         System.out.println(groups);
         System.out.println(amounts);
-
 
         final CustomListView adapter = new CustomListView(getActivity(), groups, amounts , imgId);
         listView.setAdapter(adapter);

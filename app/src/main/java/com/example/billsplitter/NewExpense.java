@@ -31,11 +31,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.seismic.ShakeDetector;
 
 import java.io.FileNotFoundException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import static com.example.billsplitter.MainActivity.checkUser;
 import static com.example.billsplitter.MainActivity.getIdFromUserName;
 import static com.example.billsplitter.MainActivity.getNameFromUserID;
+import static com.example.billsplitter.ui.util.GenerateUniqueId.getUniqueId;
 
 public class NewExpense extends AppCompatActivity implements ShakeDetector.Listener {
     private Button paid;
@@ -56,6 +59,8 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
 
     private DatabaseReference ExpenseTable;
     private DatabaseReference FriendsAndGroups;
+
+    private DatabaseReference ActivityTable;
     private String UserID;
     private String you;
     private String friend;
@@ -96,10 +101,12 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         {
             if (getNameFromUserID(f.get(i)).equals(""))
             {
-                friendsAndGroups.add(f.get(i));
+                if (!f.get(i).equals("isEmpty"))
+                    friendsAndGroups.add(f.get(i));
             }
             else {
-                friendsAndGroups.add(getNameFromUserID(f.get(i)));
+                if (!f.get(i).equals("isEmpty"))
+                    friendsAndGroups.add(getNameFromUserID(f.get(i)));
             }
         }
         PaidList = new ArrayList<>();
@@ -171,7 +178,6 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                 for(int i=0;i<PaidList.size();i++){
                     listItems[i] = PaidList.get(i);
                 }
-
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(NewExpense.this);
                 builder.setTitle("Paid by");
@@ -299,18 +305,23 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         else {
             PaidBy = getIdFromUserName(selected);
         }
+        if (!PaidBy.equals(UserID)){
+            PaidList.add(getNameFromUserID(UserID));
+        }
 
         boolean groupExpense = true;
         if (friendID.equals("")){
             number = PaidList.size();
             splitAmount = Double.parseDouble(amount)/number;
-             amountFinal = String.valueOf(splitAmount);
+            DecimalFormat df = new DecimalFormat("#.##");
+            amountFinal = df.format(splitAmount);
         }
         else {
             groupExpense = false;
             number = 2;
             splitAmount = Double.parseDouble(amount)/number;
-            amountFinal = String.valueOf(splitAmount);
+            DecimalFormat df = new DecimalFormat("#.##");
+            amountFinal = df.format(splitAmount);
 
             if (paidByYou){
                 you = amountFinal;
@@ -321,7 +332,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                 you = "-" + amountFinal;
             }
         }
-
+        addExpenseToActivity(desc, PaidBy, amountFinal);
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -331,6 +342,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
             ExpenseTable.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                     for (DataSnapshot unit : dataSnapshot.getChildren()) {
 
                         if (unit.getKey().equals(PaidBy)){
@@ -341,19 +353,21 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                                 Double value = Double.parseDouble(preValue);
                                 value = value + Double.parseDouble(amountFinal);
 
-                                ExpenseTable.child(unit.getKey()).child("group_expenses").child(groupName).child(group.getKey()).setValue(value);
-
+                                ExpenseTable.child(unit.getKey()).child("group_expenses").child(groupName).child(group.getKey()).setValue(value.toString());
                             }
                         }
-                        else if (PaidBy.contains(getNameFromUserID(unit.getKey()))) {
+                        else if (PaidList.contains(getNameFromUserID(unit.getKey()))) {
 
                             for (DataSnapshot group : unit.child("group_expenses").child(groupName).getChildren())
                             {
-                                String preValue = group.getValue().toString();
-                                Double value = Double.parseDouble(preValue);
-                                value = value - Double.parseDouble(amountFinal);
+                                if (group.getKey().equals(PaidBy)){
+                                    String preValue = group.getValue().toString();
+                                    Double value = Double.parseDouble(preValue);
+                                    value = value - Double.parseDouble(amountFinal);
 
-                                ExpenseTable.child(unit.getKey()).child("group_expenses").child(groupName).child(group.getKey()).setValue(value);
+                                    ExpenseTable.child(unit.getKey()).child("group_expenses").child(groupName).child(group.getKey()).setValue(value.toString());
+                                }
+
                             }
 
                         }
@@ -380,13 +394,13 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                             Double value = Double.parseDouble(preValue);
                             value = value + Double.parseDouble(you);
 
-                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(friendID).setValue(String.valueOf(value));
+                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(friendID).setValue(value.toString());
                         }
                         else if (unit.getKey().equals(friendID)){
                             String preValue = unit.child("individual_expenses").child(UserID).getValue().toString();
                             Double value = Double.parseDouble(preValue);
                             value = value + Double.parseDouble(friend);
-                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(UserID).setValue(value);
+                            ExpenseTable.child(unit.getKey()).child("individual_expenses").child(UserID).setValue(value.toString());
                         }
                     }
                 }
@@ -397,6 +411,40 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                 }
             });
         }
+
+
+    }
+
+
+    private void addExpenseToActivity(final String desc, final String paidBy, final String amount){
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        final String expenseID = getUniqueId();
+
+        ActivityTable = database.getReference("activity/");
+        ActivityTable.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot unit : dataSnapshot.getChildren()){
+                    if (unit.getKey().equals(UserID)){
+                        ActivityTable.child(unit.getKey()).child(expenseID).child("desc").setValue(desc);
+                        ActivityTable.child(unit.getKey()).child(expenseID).child("amount").setValue(amount);
+                        ActivityTable.child(unit.getKey()).child(expenseID).child("paidBy").setValue(paidBy);
+                    }
+                    else if (PaidList.contains(getNameFromUserID(unit.getKey()))){
+                        ActivityTable.child(unit.getKey()).child(expenseID).child("desc").setValue(desc);
+                        ActivityTable.child(unit.getKey()).child(expenseID).child("amount").setValue(amount);
+                        ActivityTable.child(unit.getKey()).child(expenseID).child("paidBy").setValue(paidBy);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
 
     }

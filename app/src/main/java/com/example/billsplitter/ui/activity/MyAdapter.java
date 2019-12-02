@@ -7,11 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+
 import com.example.billsplitter.R;
 
 import java.util.ArrayList;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import static com.example.billsplitter.MainActivity.getNameFromUserID;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private ArrayList<String> mPaidBy;
@@ -51,18 +54,21 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         String paid = mPaidBy.get(position);
         String Item = mItem.get(position);
         String Amount = mAmount.get(position);
-        Double dAmount = Double.parseDouble(Amount);
 
-        holder.expenseDesc.setText(paid + "added a new expense for " + Item);
 
-        if (dAmount < 0)
+       holder.expenseDesc.setText(getNameFromUserID(paid) + " added a new expense for " + Item);
+
+        if (Amount.charAt(0) == '-')
         {
-            holder.expensePayment.setText("You owe " + -dAmount + " to" + paid);
+            holder.expensePayment.setText("You owe -" + Amount + " to" + getNameFromUserID(paid));
         }
         else {
-            holder.expensePayment.setText(paid + " owes you " + dAmount);
+            holder.expensePayment.setText(getNameFromUserID(paid) + " owes you " + Amount);
         }
 
+
+     System.out.println("position = " + position);
+        System.out.println(mPaidBy.size());
     }
 
     //returns the size of the dataset

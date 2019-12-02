@@ -38,12 +38,10 @@ public class FriendsTab extends Fragment {
         super.onCreate(savedInstanceState);
 
     }
-    private int MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 
     private HomeViewModel homeViewModel;
     private ListView listView;
 
-    private Button addFriend;
     private Integer imgId;
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -62,27 +60,6 @@ public class FriendsTab extends Fragment {
 
         listView = view.findViewById(R.id.friends_list);
         imgId = R.drawable.ic_person_black_24dp;
-        /*addFriend = view.findViewById(R.id.addFriend);
-
-
-        addFriend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-                    Intent intent =  new Intent(getContext(), AddFriend.class);
-                    startActivity(intent);
-
-            }
-        });*/
-
-        amounts.add("owes");
-        amounts.add("owes");
-        amounts.add("owes");
-        amounts.add("owes");
-        amounts.add("owes");
-        amounts.add("owes");
-        amounts.add("owes");
 
 
         //Populating the friends list
