@@ -10,4 +10,5 @@
     <color name="colorLessWhite">#d6d6d6</color>
     <color name="gradientColorStart">#ffffff</color>
     <color name="gradientColorEnd">#00ffff</color>
+    <color name="colorBlack">#0B0000</color>>
 </resources>

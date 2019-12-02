@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.billsplitter.R;
 
@@ -22,21 +24,57 @@ import java.util.ArrayList;
 public class ActivityFragment extends Fragment {
 
     private ActivityViewModel activityViewModel;
+    private RecyclerView recycle_view;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+
+    private ArrayList<String> PaidBy;
+    private ArrayList<String> Item;
+    private ArrayList<String> Amount;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         activityViewModel =
                 ViewModelProviders.of(this).get(ActivityViewModel.class);
         View root = inflater.inflate(R.layout.fragment_activity, container, false);
-        final ListView list = root.findViewById(R.id.activity_list);
 
-        activityViewModel.getList().observe(this, new Observer<ArrayList<String>>() {
+        recycle_view = root.findViewById(R.id.recycler_view);
+        recycle_view.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(getContext());
+        recycle_view.setLayoutManager(layoutManager);
+
+        PaidBy = new ArrayList<>();
+        Item = new ArrayList<>();
+        Amount = new ArrayList<>();
+
+
+        activityViewModel.getPaidByList().observe(this, new Observer<ArrayList<String>>() {
             @Override
             public void onChanged(ArrayList<String> strings) {
-                ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, strings);
-                list.setAdapter(adapter);
+                PaidBy = strings;
+                setAdapter();
+            }
+        });
+        activityViewModel.getAmountList().observe(this, new Observer<ArrayList<String>>() {
+            @Override
+            public void onChanged(ArrayList<String> strings) {
+                Amount = strings;
+                setAdapter();
+            }
+        });
+        activityViewModel.getItemList().observe(this, new Observer<ArrayList<String>>() {
+            @Override
+            public void onChanged(ArrayList<String> strings) {
+                Item = strings;
+                setAdapter();
             }
         });
         return root;
+    }
+    private void setAdapter(){
+
+        mAdapter = new MyAdapter(PaidBy, Item, Amount);
+        recycle_view.setAdapter(mAdapter);
     }
 }

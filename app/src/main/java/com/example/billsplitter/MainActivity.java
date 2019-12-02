@@ -32,12 +32,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.billsplitter.ui.util.GenerateUniqueId.getUniqueId;
+
 public class MainActivity extends AppCompatActivity implements Serializable {
 
     private static final int RC_SIGN_IN = 123;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference userTable = database.getReference("users/");
     DatabaseReference expensesDataTable = database.getReference("expenses_data/");
+    DatabaseReference activityTable;
     String UserID;
     static HashMap<String, String> userMap;
 
@@ -110,6 +113,14 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         expensesDataTable.child(UserID).child("group_expenses").child("isEmpty").setValue(true);
         expensesDataTable.child(UserID).child("individual_expenses").child("isEmpty").setValue(true);
     }
+    private void createActivityTable(){
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        final String expenseID = getUniqueId();
+
+        activityTable = database.getReference("activity/");
+        activityTable.child(UserID).child("isEmpty").setValue("true");
+    }
 
 
     private void addUserToTheDatabaseIfNotExists(final FirebaseUser userDetails) {
@@ -134,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 if (!isUserPresent) {
                     addUserToDatabase(userDetails);
                     createGroupExpensesTable(userDetails);
-
+                    createActivityTable();
                 }
             }
 

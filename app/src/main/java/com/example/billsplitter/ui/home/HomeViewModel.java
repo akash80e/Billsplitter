@@ -141,7 +141,6 @@ public class HomeViewModel extends ViewModel {
                                 }
                                 amountGroups.add(dTotal.toString());
                             }
-
                         }
                     }
                 }

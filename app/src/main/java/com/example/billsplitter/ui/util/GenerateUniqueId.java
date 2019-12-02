@@ -3,7 +3,7 @@ package com.example.billsplitter.ui.util;
 import java.util.UUID;
 
 public class GenerateUniqueId {
-    public String getUniqueId() {
+    public static String getUniqueId() {
         return UUID.randomUUID().toString();
     }
 }
