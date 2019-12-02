@@ -15,6 +15,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabMode="fixed"
-        app:tabGravity="fill"/>
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/colorWhite"
+        app:tabBackground="@color/colorPrimary"
+        app:tabTextColor="@color/colorLessWhite"
+        app:tabSelectedTextColor="@color/colorWhite"
+        />
 
 </RelativeLayout>
