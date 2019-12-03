@@ -43,4 +43,6 @@
         <item>Equally</item>
         <item>Unequally</item>
     </string-array>
+
+    <string name="start_group">Start Your Group</string>
 </resources>

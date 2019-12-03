@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -143,6 +144,13 @@ public class NewGroup extends AppCompatActivity {
 
         final String groupName = edGroupName.getText().toString();
 
+        if(groupName.isEmpty() || userItems.isEmpty()){
+            if(groupName.isEmpty())
+                edGroupName.setError("Please enter the group name");
+            if(userItems.isEmpty())
+                Toast.makeText(getApplicationContext(),"Please select friends",Toast.LENGTH_LONG).show();
+        return;
+        }
 
         groupMembers = new ArrayList<>();
         for (int i=0;i<userItems.size();i++){
