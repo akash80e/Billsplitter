@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.billsplitter.DisplayGroup;
 import com.example.billsplitter.R;
@@ -35,6 +36,7 @@ public class GroupsTab extends Fragment {
     private HomeViewModel homeViewModel;
     private Integer imgId;
     private ListView listView;
+    private TextView emptyGroup;
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -50,6 +52,7 @@ public class GroupsTab extends Fragment {
 
         listView = view.findViewById(R.id.group_list);
         imgId = R.drawable.ic_group_black_24dp;
+        emptyGroup = view.findViewById(R.id.empty_groups);
 
 
         //Populating the friends list
@@ -77,8 +80,9 @@ public class GroupsTab extends Fragment {
 
     private void updateList(){
 
-        System.out.println(groups);
-        System.out.println(amounts);
+       if (groups.isEmpty()){
+            emptyGroup.setText(getString(R.string.empty_group));
+       }
 
         final CustomListView adapter = new CustomListView(getActivity(), groups, amounts , imgId);
         listView.setAdapter(adapter);

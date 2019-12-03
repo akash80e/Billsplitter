@@ -40,7 +40,7 @@ public class ActivityFragment extends Fragment {
                 ViewModelProviders.of(this).get(ActivityViewModel.class);
         View root = inflater.inflate(R.layout.fragment_activity, container, false);
 
-        //inflating by recylcer view
+
         recycle_view = root.findViewById(R.id.recycler_view);
         recycle_view.setHasFixedSize(true);
 

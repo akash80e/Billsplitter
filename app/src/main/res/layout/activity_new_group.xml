@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_centerHorizontal="true">
-            <RadioButton android:id="@+id/radio_appartment"
+            <RadioButton android:id="@+id/radio_apartment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Appartment"
