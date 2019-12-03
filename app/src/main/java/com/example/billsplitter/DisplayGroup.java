@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
@@ -51,7 +52,7 @@ public class DisplayGroup extends AppCompatActivity {
     private ArrayList<String> groupsMembers;
     private ArrayList<String> amounts;
     private ArrayList<String> memberID;
-    private ViewAdaptor adapter;
+    private CustomListView adapter;
 
     private Integer imgId;
     @Override
@@ -115,16 +116,28 @@ public class DisplayGroup extends AppCompatActivity {
 
                // ArrayList<Card> cardsList =  new ArrayList<>();
 
-                final CustomListView adapter = new CustomListView(DisplayGroup.this, groupsMembers, amounts , imgId);
+                adapter = new CustomListView(DisplayGroup.this, groupsMembers, amounts , imgId);
                 allMembers.setAdapter(adapter);
             }
-
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
+
+        allMembers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getApplicationContext(),GroupActivitySettleExpense.class);
+                intent.putExtra("groupName",group);
+                intent.putExtra("members",memberID);
+                String item = adapter.getItem(i);
+                intent.putExtra("UserName",item);
+                startActivity(intent);
+            }
+        });
+
 
 
         addFriend.setOnClickListener(new View.OnClickListener() {

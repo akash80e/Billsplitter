@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".DisplayGroup"></activity>
+        <activity android:name=".GroupActivitySettleExpense"></activity>
         <activity android:name=".NewExpense" android:label="@string/add_expense"/>
         <activity android:name=".SplashActivity" android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
