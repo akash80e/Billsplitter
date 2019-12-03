@@ -125,11 +125,11 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
             if (getNameFromUserID(f.get(i)).equals(""))
             {
                 if (!f.get(i).equals("isEmpty"))
-                    friendsAndGroups.add(f.get(i));
+                    friendsAndGroups.add(StringUtils.abbreviate(f.get(i),25));
             }
             else {
                 if (!f.get(i).equals("isEmpty"))
-                    friendsAndGroups.add(getNameFromUserID(f.get(i)));
+                    friendsAndGroups.add(StringUtils.abbreviate(getNameFromUserID(f.get(i)), 25));
             }
         }
         PaidList = new ArrayList<>();

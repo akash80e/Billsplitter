@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.example.billsplitter.R;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 
 public class CustomListView extends ArrayAdapter<String> {
@@ -36,7 +38,7 @@ public class CustomListView extends ArrayAdapter<String> {
         ImageView imageView = rowView.findViewById(R.id.icon);
         TextView subText = rowView.findViewById(R.id.sub_text);
 
-        titleText.setText(maintitle.get(position));
+        titleText.setText(StringUtils.abbreviate(maintitle.get(position),30));
         imageView.setImageResource(imgId);
 
         subText.setText(subtitle.get(position));
