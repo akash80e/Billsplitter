@@ -24,6 +24,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private ArrayList<String> mPaidBy;
     private ArrayList<String> mItem;
     private ArrayList<String> mAmount;
+    private ArrayList<String> mImage;
     private Context mcontext;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -36,11 +37,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
     }
 
-    public MyAdapter(ArrayList<String> PaidBy, ArrayList<String> Item, ArrayList<String> Amount, Context context) {
+    public MyAdapter(ArrayList<String> PaidBy, ArrayList<String> Item, ArrayList<String> Amount, ArrayList<String> imageid,  Context context) {
        mPaidBy = PaidBy;
        mItem = Item;
        mAmount = Amount;
        mcontext = context;
+       mImage = imageid;
+
     }
 
     //creating my views
@@ -59,12 +62,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         String paid = mPaidBy.get(position);
         String Item = mItem.get(position);
         String Amount = mAmount.get(position);
+        final String image = mImage.get(position);
         double dAmount = Double.parseDouble(Amount);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mcontext, DisplayImage.class);
+                intent.putExtra("imageID", image);
                 mcontext.startActivity(intent);
             }
         });
@@ -76,11 +81,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
         String UserID = sp.getString("UserId", null);
 
-        holder.expenseDesc.setText(getNameFromUserID(paid) + " added a new expense for " + Item);
+        holder.expenseDesc.setText(getNameFromUserID(UserID) + " added a new expense for " + Item);
 
         if (paid.equals(UserID))
         {
-            holder.expensePayment.setText(getNameFromUserID(paid) + " owes you " + dAmount);
+            holder.expensePayment.setText("You paid " + dAmount);
         }
         else {
 

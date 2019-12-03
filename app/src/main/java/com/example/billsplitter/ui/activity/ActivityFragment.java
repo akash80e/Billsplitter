@@ -32,6 +32,7 @@ public class ActivityFragment extends Fragment {
     private ArrayList<String> PaidBy;
     private ArrayList<String> Item;
     private ArrayList<String> Amount;
+    private ArrayList<String> ImageID;
     private Context context;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -50,6 +51,7 @@ public class ActivityFragment extends Fragment {
         PaidBy = new ArrayList<>();
         Item = new ArrayList<>();
         Amount = new ArrayList<>();
+        ImageID = new ArrayList<>();
         context = getActivity();
 
 
@@ -74,11 +76,18 @@ public class ActivityFragment extends Fragment {
                 setAdapter();
             }
         });
+        activityViewModel.getImageList().observe(this, new Observer<ArrayList<String>>() {
+            @Override
+            public void onChanged(ArrayList<String> strings) {
+                ImageID = strings;
+                setAdapter();
+            }
+        });
         return root;
     }
     private void setAdapter(){
 
-        mAdapter = new MyAdapter(PaidBy, Item, Amount, context );
+        mAdapter = new MyAdapter(PaidBy, Item, Amount, ImageID, context );
         recycle_view.setAdapter(mAdapter);
     }
 }

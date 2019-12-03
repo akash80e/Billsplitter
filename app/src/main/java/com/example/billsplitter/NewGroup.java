@@ -181,7 +181,7 @@ public class NewGroup extends AppCompatActivity {
                     }
                 }
                 for(int i=0;i<groupMembers.size();i++) {
-                    ExpensesTable.child(userID).child("group_expenses").child(groupName).child(groupMembers.get(i)).setValue("0");
+                    ExpensesTable.child(userID).child("group_expenses").child(groupName).child(groupMembers.get(i)).setValue("0.0");
                 }
             }
             @Override

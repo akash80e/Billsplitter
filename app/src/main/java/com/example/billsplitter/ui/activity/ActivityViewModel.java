@@ -24,15 +24,19 @@ public class ActivityViewModel extends ViewModel {
     private MutableLiveData<ArrayList<String>> PaidByList;
     private MutableLiveData<ArrayList<String>> ItemList;
     private MutableLiveData<ArrayList<String>> AmountList;
+    private MutableLiveData<ArrayList<String>> ImageList;
     private ArrayList<String> PaidBy;
     private ArrayList<String> Item;
     private ArrayList<String> Amount;
+    private ArrayList<String> ImageID;
     private Context context;
 
     public ActivityViewModel() {
        PaidByList = new MutableLiveData<>();
         ItemList = new MutableLiveData<>();
         AmountList = new MutableLiveData<>();
+        ImageList = new MutableLiveData<>();
+        ImageID = new ArrayList<>();
         PaidBy = new ArrayList<>();
         Item = new ArrayList<>();
         Amount = new ArrayList<>();
@@ -54,6 +58,10 @@ public class ActivityViewModel extends ViewModel {
 
         return AmountList;
     }
+    public LiveData<ArrayList<String>> getImageList() {
+
+        return ImageList;
+    }
 
     private void getActivity(){
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -70,9 +78,11 @@ public class ActivityViewModel extends ViewModel {
                     if (unit.getKey().equals(userID)){
                         for (DataSnapshot expenses : unit.getChildren()){
                             if (!expenses.getKey().equals("isEmpty")){
-                                PaidBy.add(expenses.child("paidBy").getValue().toString());
-                                Item.add(expenses.child("desc").getValue().toString());
-                                Amount.add(expenses.child("amount").getValue().toString());
+                                PaidBy.add(String.valueOf(expenses.child("paidBy").getValue()));
+                                Item.add(String.valueOf(expenses.child("desc").getValue()));
+                                Amount.add(String.valueOf(expenses.child("amount").getValue()));
+                                ImageID.add(String.valueOf(expenses.child("imageId").getValue()));
+                                System.out.print(expenses.child("imageId").getValue());
                             }
                         }
                     }
@@ -82,6 +92,7 @@ public class ActivityViewModel extends ViewModel {
                 PaidByList.setValue(PaidBy);
                 ItemList.setValue(Item);
                 AmountList.setValue(Amount);
+                ImageList.setValue(ImageID);
             }
 
             @Override
