@@ -2,6 +2,7 @@ package com.example.billsplitter.ui.activity;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
+import com.example.billsplitter.DisplayImage;
 import com.example.billsplitter.R;
 
 import java.util.ArrayList;
@@ -57,6 +59,17 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         String Item = mItem.get(position);
         String Amount = mAmount.get(position);
         double dAmount = Double.parseDouble(Amount);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mcontext, DisplayImage.class);
+                mcontext.startActivity(intent);
+            }
+        });
+
+
+        System.out.println("Negative sign check" + Amount);
 
         SharedPreferences sp = mcontext.getSharedPreferences("Login", Context.MODE_PRIVATE);
 
