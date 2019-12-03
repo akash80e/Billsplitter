@@ -196,6 +196,7 @@ public class DisplayGroup extends AppCompatActivity {
                                         }
                                     }
                                 }
+                                databaseReference.child(friend_id).child("group_expenses").child(group).child(my_id).setValue("0.0");
                             }
 
 

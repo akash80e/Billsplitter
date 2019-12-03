@@ -9,7 +9,7 @@
         android:id="@+id/group_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Group Name"
+        android:text="@string/start_group"
         android:textStyle="bold"
         android:textSize="25dp"
         android:layout_marginTop="30dp"
@@ -57,7 +57,7 @@
             <RadioButton android:id="@+id/radio_apartment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Appartment"
+                android:text="Apartment"
                 android:onClick="onRadioButtonClicked"/>
             <RadioButton android:id="@+id/radio_house"
                 android:layout_width="wrap_content"

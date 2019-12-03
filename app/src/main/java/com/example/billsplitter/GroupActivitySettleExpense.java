@@ -88,9 +88,9 @@ public class GroupActivitySettleExpense extends AppCompatActivity {
                 if(amt == 0.0)
                     oweMoney.setText("You are all settled up with "+name);
                 else if (amt < 0.0)
-                    oweMoney.setText("You owe "+Math.abs(amt) +" to "+name);
+                    oweMoney.setText("You owe $"+Math.abs(amt) +" to "+name);
                 else
-                    oweMoney.setText("You get back "+Math.abs(amt) +" from "+name);
+                    oweMoney.setText("You get back $"+Math.abs(amt) +" from "+name);
             }
 
             @Override
