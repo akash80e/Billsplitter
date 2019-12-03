@@ -31,6 +31,7 @@ public class FriendsTab extends Fragment {
 
     private HomeViewModel homeViewModel;
     private ListView listView;
+    private TextView emptyFriend;
 
     private Integer imgId;
     @Override
@@ -50,6 +51,7 @@ public class FriendsTab extends Fragment {
 
         listView = view.findViewById(R.id.friends_list);
         imgId = R.drawable.ic_person_black_24dp;
+        emptyFriend = view.findViewById(R.id.empty_friends);
 
 
         //Populating the friends list
@@ -76,6 +78,10 @@ public class FriendsTab extends Fragment {
     }
 
     private void updateList(){
+
+        if (friends.isEmpty()){
+            emptyFriend.setText(getString(R.string.empty_friends));
+        }
 
         final CustomListView adapter = new CustomListView(getActivity(), friends, amounts , imgId);
         //ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, strings);

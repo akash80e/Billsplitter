@@ -31,6 +31,9 @@
 
     <string name="add_expense">Add expense</string>
 
+    <string name="empty_group">  Your expenses with groups will appear here!</string>
+    <string name="empty_friends">  Your expenses with friends will appear here!</string>
+
     <string-array name="person">
         <item>You</item>
         <item>Friend</item>
