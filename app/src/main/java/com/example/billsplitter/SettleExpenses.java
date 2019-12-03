@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+//class for settling up the expenses
 public class SettleExpenses extends AppCompatActivity {
 
     private TextView userName;
@@ -42,7 +43,7 @@ public class SettleExpenses extends AppCompatActivity {
         final String friend_id = MainActivity.getIdFromUserName(name);
         userName.setText(name);
 
-
+        //getting database reference
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -88,7 +89,8 @@ public class SettleExpenses extends AppCompatActivity {
 
             }
         });
-        
+
+        //onClick Listener for settle button
         settleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

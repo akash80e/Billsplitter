@@ -62,7 +62,7 @@ public class ActivityViewModel extends ViewModel {
         final String userID = sp.getString("UserId", null);
         DatabaseReference ref = database.getReference("activity/");
 
-
+        //getting Value Event Listener
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

@@ -23,6 +23,7 @@ import static com.example.billsplitter.MainActivity.getNameFromUserID;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
+//class for Home View Model
 public class HomeViewModel extends ViewModel {
 
     private MutableLiveData<ArrayList<String>> mfriendsList;
@@ -73,7 +74,9 @@ public class HomeViewModel extends ViewModel {
         friends = new ArrayList<>();
         amountFriends = new ArrayList<>();
 
+        //adding reference to database
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
+
 
         SharedPreferences sp = context.getSharedPreferences("Login", MODE_PRIVATE);
         final String userID = sp.getString("UserId", null);
@@ -108,6 +111,7 @@ public class HomeViewModel extends ViewModel {
         });
     }
 
+    //setting groups list
     public void setGroupList(){
 
         groups = new ArrayList<>();

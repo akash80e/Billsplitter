@@ -42,7 +42,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+//class for Home Activity
 public class HomeActivity extends AppCompatActivity{
+
+    //declaring variables
     private AppBarConfiguration mAppBarConfiguration;
     private DatabaseReference UserTable;
     private DatabaseReference ExpensesTable;
@@ -67,6 +70,7 @@ public class HomeActivity extends AppCompatActivity{
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
+        //fetching friends and group
         friendsAndGroupsList = fetchFriendsAndGroup();
 
 
@@ -79,6 +83,7 @@ public class HomeActivity extends AppCompatActivity{
                 .setDrawerLayout(drawer)
                 .build();
 
+        //navigation controller for UI
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
 
@@ -112,6 +117,7 @@ public class HomeActivity extends AppCompatActivity{
             }
         });
 
+        //setting OnClick Listener for logout button
         logOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,7 +202,7 @@ public class HomeActivity extends AppCompatActivity{
                 || super.onSupportNavigateUp();
     }
 
-
+    //method for adding friend to database
     private boolean addFriendToDb(final String friendID) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         UserTable = database.getReference("/users");
@@ -221,6 +227,8 @@ public class HomeActivity extends AppCompatActivity{
         return true;
     }
 
+
+    //method for adding friend expenses to database
     private boolean addFriendExpensestoDb(final String friendID) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         ExpensesTable = database.getReference("/expenses_data");
@@ -245,6 +253,7 @@ public class HomeActivity extends AppCompatActivity{
         return true;
     }
 
+    //method for fetching friends
     private void fetchFriends() {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         UserTable = database.getReference("/users");
@@ -270,6 +279,7 @@ public class HomeActivity extends AppCompatActivity{
         });
     }
 
+    //method for fetching friends and group
     private ArrayList<String> fetchFriendsAndGroup() {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         FriendsAndGroups = database.getReference("/expenses_data");

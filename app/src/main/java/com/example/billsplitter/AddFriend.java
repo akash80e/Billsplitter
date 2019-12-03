@@ -23,8 +23,10 @@ import com.example.billsplitter.R;
 import java.util.ArrayList;
 import java.util.List;
 
+//class for adding a new friend
 public class AddFriend extends AppCompatActivity {
 
+    //declaring variables
     private ListView result;
     private SearchView search;
     private int MY_PERMISSIONS_REQUEST_READ_CONTACTS;

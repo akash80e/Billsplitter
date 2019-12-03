@@ -18,8 +18,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+//class for settle up expenses for group
 public class GroupActivitySettleExpense extends AppCompatActivity {
 
+    //declaring variables
     private TextView userName;
     private TextView userEmail;
     private TextView oweMoney;
@@ -46,6 +48,7 @@ public class GroupActivitySettleExpense extends AppCompatActivity {
         final String friend_id = MainActivity.getIdFromUserName(name);
         userName.setText(name);
 
+        //getting database reference
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -104,6 +107,7 @@ public class GroupActivitySettleExpense extends AppCompatActivity {
             }
         });
 
+        //OnClick Listener for settle Button
         settleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

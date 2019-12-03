@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 
+//class CustomListView
 public class CustomListView extends ArrayAdapter<String> {
 
     private final Activity context;

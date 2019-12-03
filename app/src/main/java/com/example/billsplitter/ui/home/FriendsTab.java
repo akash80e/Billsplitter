@@ -27,6 +27,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+//class for Friends Tab
 public class FriendsTab extends Fragment {
     ArrayList<String> friends;
     ArrayList<String> amounts;

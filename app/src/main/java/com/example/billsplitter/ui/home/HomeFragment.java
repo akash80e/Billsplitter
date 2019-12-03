@@ -15,7 +15,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.billsplitter.R;
 import com.google.android.material.tabs.TabLayout;
 
-
+//class for home fragment
 public class HomeFragment extends Fragment {
 
     TabPagerAdapter myTabAdapter;
@@ -49,6 +49,8 @@ public class HomeFragment extends Fragment {
 
         return root;
     }
+
+    //setting page Adapter
     private void setPagerAdapter() {
 
         androidx.fragment.app.FragmentManager fragManager = getChildFragmentManager();

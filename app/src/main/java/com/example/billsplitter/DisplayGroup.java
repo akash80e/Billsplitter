@@ -43,8 +43,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+//class for displaying group
 public class DisplayGroup extends AppCompatActivity {
 
+    //defining variables
     private TextView groupName;
     private ListView allMembers;
     private Button addFriend;
@@ -63,6 +65,7 @@ public class DisplayGroup extends AppCompatActivity {
         groupName = findViewById(R.id.group_name);
         addFriend = findViewById(R.id.addPeople);
 
+        //initializing variables
         groupsMembers = new ArrayList<>();
         amounts = new ArrayList<>();
         memberID = new ArrayList<>();
@@ -72,12 +75,13 @@ public class DisplayGroup extends AppCompatActivity {
         final String group = getIntent().getStringExtra("groupName");
         groupName.setText(group.toUpperCase());
 
+        //getting database reference
         databaseReference = FirebaseDatabase.getInstance().getReference("expenses_data");
         SharedPreferences sp = this.getSharedPreferences("Login", MODE_PRIVATE);
         final String my_id = sp.getString("UserId", null);
 
 
-
+        //listener for database reference
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -126,6 +130,8 @@ public class DisplayGroup extends AppCompatActivity {
             }
         });
 
+
+        //Click Listener for list view
         allMembers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -139,7 +145,7 @@ public class DisplayGroup extends AppCompatActivity {
         });
 
 
-
+        //Click Listener for Add Friend Button
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -34,6 +34,7 @@ import java.util.Map;
 
 import static com.example.billsplitter.ui.util.GenerateUniqueId.getUniqueId;
 
+//class for Main Activity
 public class MainActivity extends AppCompatActivity implements Serializable {
 
     private static final int RC_SIGN_IN = 123;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         createSignInIntent();
     }
 
+    //method for sign in for user account
     public void createSignInIntent() {
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         }
     }
 
+    //adding user to database
     private void addUserToDatabase(FirebaseUser userDetails) {
         User user = new User(userDetails.getDisplayName(), userDetails.getEmail(), UserID, userMap);
 
@@ -113,6 +116,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         expensesDataTable.child(UserID).child("group_expenses").child("isEmpty").setValue(true);
         expensesDataTable.child(UserID).child("individual_expenses").child("isEmpty").setValue(true);
     }
+
+    //creating activity table
     private void createActivityTable(){
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -122,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         activityTable.child(UserID).child("isEmpty").setValue("true");
     }
 
-
+    //adding user to database if it not exists
     private void addUserToTheDatabaseIfNotExists(final FirebaseUser userDetails) {
         userTable.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -156,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         });
     }
 
+    //Getting name from userID
     public static String getNameFromUserID(String userID) {
         if (!userMap.containsKey(userID)){
             return "";

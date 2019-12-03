@@ -55,6 +55,8 @@ import static com.example.billsplitter.MainActivity.getNameFromUserID;
 import static com.example.billsplitter.ui.util.GenerateUniqueId.getUniqueId;
 
 public class NewExpense extends AppCompatActivity implements ShakeDetector.Listener {
+
+    //declaring variables
     private Button paid;
     private Button split, addItem;
 
@@ -100,10 +102,12 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_expense);
 
+        //shake detector for sensor
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         ShakeDetector shakeDetector = new ShakeDetector(NewExpense.this);
         shakeDetector.start(sensorManager);
 
+        //initializing variables
         etAmount = findViewById(R.id.amount);
         etDescription = findViewById(R.id.describeitem);
         paid = findViewById(R.id.paidByButton);
@@ -141,6 +145,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sList =  findViewById(R.id.list_friends);
         sList.setAdapter(adapter);
+
 
         sList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -185,7 +190,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
             }
         });
 
-
+      //OnClick Listener for paid by
         paid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -236,6 +241,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
             }
         });
 
+        //OnClick Listener for adding item
         addItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -268,7 +274,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         });
     }
 
-
+   //adding expense to database
     private void addExpenseToDb(String desc, String amount, final String friendID){
         Double splitAmount;
         int number = 0;
@@ -420,7 +426,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
 
     }
 
-
+    //method for adding expense to activity
     private void addExpenseToActivity(final String desc, final String paidBy, final String amount){
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -460,6 +466,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         startActivity(intent);
     }
 
+    //method for uploading an image either from camera or gallery
     public void openBottomSheet(){
         mBottomSheetDialog = new BottomSheetDialog(this);
         View sheetView = this.getLayoutInflater().inflate(R.layout.select_expense_image_bottom_layout, null);
@@ -510,6 +517,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         }
     }
 
+    //method for uploading image to firebase
     private void uploadImageToFirebase(){
         String imageName = StringUtils.join(new GenerateUniqueId().getUniqueId(), ".jpeg");
         StorageReference newImageRef = expenseImagesRef.child(imageName);
