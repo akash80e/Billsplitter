@@ -29,8 +29,10 @@
 
     <Button
         android:id="@+id/addPeople"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
         android:layout_below="@id/recycler"
         android:text="@string/add_friends_group">
     </Button>
