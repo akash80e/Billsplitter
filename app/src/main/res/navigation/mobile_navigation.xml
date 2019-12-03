@@ -12,28 +12,16 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.billsplitter.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
-
-    <fragment
         android:id="@+id/nav_activity"
         android:name="com.example.billsplitter.ui.activity.ActivityFragment"
         android:label="@string/menu_activity"
         tools:layout="@layout/fragment_activity" />
 
     <fragment
-        android:id="@+id/nav_tools"
-        android:name="com.example.billsplitter.ui.settings.SettingsFragment"
-        android:label="@string/menu_settings"
-        tools:layout="@layout/fragment_settings" />
-
-    <fragment
-        android:id="@+id/nav_share"
-        android:name="com.example.billsplitter.ui.share.ShareFragment"
-        android:label="@string/menu_share"
-        tools:layout="@layout/fragment_share" />
+        android:id="@+id/nav_contact_us"
+        android:name="com.example.billsplitter.ui.contactus.ContactUsFragment"
+        android:label="@string/menu_contact_us"
+        tools:layout="@layout/fragment_contact_us" />
 
 
 </navigation>

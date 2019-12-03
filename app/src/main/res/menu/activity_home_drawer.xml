@@ -9,29 +9,13 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/menu_home" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_gallery" />
-        <item
             android:id="@+id/nav_activity"
             android:icon="@drawable/ic_menu_activity"
             android:title="@string/menu_activity" />
         <item
-            android:id="@+id/nav_tools"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_settings" />
+            android:id="@+id/nav_contact_us"
+            android:icon="@drawable/ic_email_black_24dp"
+            android:title="Contact us" />
     </group>
-
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/menu_share" />
-
-        </menu>
-    </item>
-
-
 </menu>
 
