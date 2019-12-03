@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import static com.example.billsplitter.MainActivity.getIdFromUserName;
 import static com.example.billsplitter.MainActivity.getNameFromUserID;
 
 
@@ -39,6 +40,7 @@ public class NewGroup extends AppCompatActivity {
 
     private String[] friends;
     private String userID;
+    ArrayList<String> groupMembers;
 
 
     private boolean[] checkedItems;
@@ -141,31 +143,34 @@ public class NewGroup extends AppCompatActivity {
 
         final String groupName = edGroupName.getText().toString();
 
+
+        groupMembers = new ArrayList<>();
+        for (int i=0;i<userItems.size();i++){
+            groupMembers.add(getIdFromUserName(userItems.get(i)));
+        }
+
         ExpensesTable.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot unit : dataSnapshot.getChildren()){
 
-                    System.out.println("friend" + friendUserIDList);
+                    System.out.println("friend" + groupMembers);
                     System.out.println("unit :" + unit.getKey());
-                    if (friendUserIDList.contains(unit.getKey())){
-                        for(int i=0;i<friendUserIDList.size();i++){
+                    if (groupMembers.contains(unit.getKey())){
+                        for(int i=0;i<groupMembers.size();i++){
 
-                            if (friendUserIDList.get(i).equals(unit.getKey()))
+                            if (groupMembers.get(i).equals(unit.getKey()))
                             {
-                                ExpensesTable.child(unit.getKey()).child("group_expenses").child(groupName).child(userID).setValue("0");
+                                ExpensesTable.child(unit.getKey()).child("group_expenses").child(groupName).child(userID).setValue("0.0");
                             }
                             else {
-                                ExpensesTable.child(unit.getKey()).child("group_expenses").child(groupName).child(friendUserIDList.get(i)).setValue("0");
+                                ExpensesTable.child(unit.getKey()).child("group_expenses").child(groupName).child(groupMembers.get(i)).setValue("0.0");
                             }
                         }
                     }
-                    else if (unit.getKey().equals(userID))
-                    {
-                        for(int i=0;i<friendUserIDList.size();i++){
-                            ExpensesTable.child(unit.getKey()).child("group_expenses").child(groupName).child(friendUserIDList.get(i)).setValue("0");
-                        }
-                    }
+                }
+                for(int i=0;i<groupMembers.size();i++) {
+                    ExpensesTable.child(userID).child("group_expenses").child(groupName).child(groupMembers.get(i)).setValue("0");
                 }
             }
             @Override
