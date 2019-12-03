@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+//class for tab pager adapter
 public class TabPagerAdapter extends FragmentPagerAdapter {
 
         public TabPagerAdapter(FragmentManager fm) {

@@ -1,5 +1,6 @@
 package com.example.billsplitter;
 
+//class for getting icon and name
 public class Card {
     private int icon;
     private String name;

@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+//class for Group Tab
 public class GroupsTab extends Fragment {
     ArrayList<String> groups;
     ArrayList<String> amounts;

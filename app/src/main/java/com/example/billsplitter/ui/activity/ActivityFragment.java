@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.billsplitter.R;
 
 import java.util.ArrayList;
-
+//class for activity fragment
 public class ActivityFragment extends Fragment {
 
     private ActivityViewModel activityViewModel;

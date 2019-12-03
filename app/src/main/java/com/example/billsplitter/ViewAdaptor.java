@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+//class for adaptor view which is used for recycler view
 public class ViewAdaptor extends RecyclerView.Adapter<ViewAdaptor.ViewHolder>{
 
     private ArrayList<Card> cardArrayList;
@@ -23,6 +24,7 @@ public class ViewAdaptor extends RecyclerView.Adapter<ViewAdaptor.ViewHolder>{
         return holder;
     }
 
+    //binding to view holder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Card card = cardArrayList.get(position);

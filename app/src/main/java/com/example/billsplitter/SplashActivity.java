@@ -11,8 +11,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+//class for splash screen
 public class SplashActivity extends AppCompatActivity {
 
+    //initializing variables
     private ImageView logoImage;
     private TextView appTitle;
     private TextView subtitle;
@@ -33,6 +35,7 @@ public class SplashActivity extends AppCompatActivity {
         subtitle.setTypeface(fontSubtitle);
 
         logoImage.setImageResource(R.drawable.bill_splitter_icon);
+        //handler for splash activity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

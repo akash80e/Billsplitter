@@ -3,7 +3,7 @@ package com.example.billsplitter.ui.database;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.HashMap;
-
+//getting User's attributes
 @IgnoreExtraProperties
 public class User {
 

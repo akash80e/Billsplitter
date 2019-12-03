@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import static com.example.billsplitter.MainActivity.getNameFromUserID;
 
+//class for Adapter of recycler view
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private ArrayList<String> mPaidBy;
     private ArrayList<String> mItem;

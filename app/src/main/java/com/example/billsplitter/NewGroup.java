@@ -29,6 +29,7 @@ import static com.example.billsplitter.MainActivity.getNameFromUserID;
 
 public class NewGroup extends AppCompatActivity {
 
+    //declaring variables
     Button btnCreateGroup;
     Button btnAddFriend;
 
@@ -53,21 +54,21 @@ public class NewGroup extends AppCompatActivity {
         switch(view.getId()) {
             case R.id.radio_apartment:
                 if (checked)
-                    // Pirates are the best
+
                     break;
             case R.id.radio_house:
                 if (checked)
-                    // Ninjas rule
+
                     break;
 
             case R.id.radio_trip:
                 if (checked)
-                    // Ninjas rule
+
                     break;
 
             case R.id.radio_other:
                 if (checked)
-                    // Ninjas rule
+
                     break;
         }
     }
@@ -94,12 +95,13 @@ public class NewGroup extends AppCompatActivity {
             friends[i] =   getNameFromUserID(friendUserIDList.get(i)) ;
         }
 
+        //On click Listener for add friends button while creating new group
         btnAddFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(NewGroup.this);
                 builder.setTitle("Select Group Members");
-                builder.setMultiChoiceItems(friends, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+                builder.setMultiChoiceItems(friends, checkedItems,new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int pos, boolean check) {
                         if(check){
@@ -137,6 +139,7 @@ public class NewGroup extends AppCompatActivity {
         });
     }
 
+    //addding group to database
     private void addGroupToDb() {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         ExpensesTable = database.getReference("expenses_data");
