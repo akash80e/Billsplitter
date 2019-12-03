@@ -58,14 +58,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         String Amount = mAmount.get(position);
         double dAmount = Double.parseDouble(Amount);
 
-
-        System.out.println("Negative sign check" + Amount);
-
         SharedPreferences sp = mcontext.getSharedPreferences("Login", Context.MODE_PRIVATE);
 
         String UserID = sp.getString("UserId", null);
 
-       holder.expenseDesc.setText(getNameFromUserID(paid) + " added a new expense for " + Item);
+        holder.expenseDesc.setText(getNameFromUserID(paid) + " added a new expense for " + Item);
 
         if (paid.equals(UserID))
         {
@@ -75,7 +72,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
             holder.expensePayment.setText("You owe " + dAmount + " to " + getNameFromUserID(paid));
         }
-
 
      System.out.println("position = " + position);
         System.out.println(mPaidBy.size());

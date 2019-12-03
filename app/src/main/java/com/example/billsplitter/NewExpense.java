@@ -239,9 +239,21 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         addItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String desc = etDescription.getText().toString();
                 String amount = etAmount.getText().toString();
-                Toast.makeText(getApplicationContext(), selected, Toast.LENGTH_SHORT).show();
+
+
+                if (desc.isEmpty() || amount.isEmpty()){
+                    if (desc.isEmpty()){
+                        etDescription.setError("Please fill the bill description");
+                    }
+                    if (amount.isEmpty()){
+                        etAmount.setError("Please enter the amount");
+                    }
+                    return;
+                }
+
                 if (checkUser(selectedFriendOrGroup)){
                     addExpenseToDb(desc, amount, getIdFromUserName(selectedFriendOrGroup) );
                 }
