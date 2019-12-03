@@ -1,31 +1,21 @@
 package com.example.billsplitter.ui.home;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.example.billsplitter.AddFriend;
-import com.example.billsplitter.HomeActivity;
-import com.example.billsplitter.R;
-import com.example.billsplitter.SettleExpenses;
-import com.example.billsplitter.ui.database.User;
-
-import java.util.ArrayList;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
+import com.example.billsplitter.R;
+import com.example.billsplitter.SettleExpenses;
+
+import java.util.ArrayList;
 
 public class FriendsTab extends Fragment {
     ArrayList<String> friends;

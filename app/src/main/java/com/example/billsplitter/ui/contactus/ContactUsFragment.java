@@ -1,4 +1,4 @@
-package com.example.billsplitter.ui.share;
+package com.example.billsplitter.ui.contactus;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.billsplitter.R;
 
-public class ShareFragment extends Fragment {
+public class ContactUsFragment extends Fragment {
 
-    private ShareViewModel shareViewModel;
+    private ContactUsViewModel contactUsViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        shareViewModel =
-                ViewModelProviders.of(this).get(ShareViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_share, container, false);
-        final TextView textView = root.findViewById(R.id.text_share);
-        shareViewModel.getText().observe(this, new Observer<String>() {
+        contactUsViewModel =
+                ViewModelProviders.of(this).get(ContactUsViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_contact_us, container, false);
+        final TextView textView = root.findViewById(R.id.text_contact_us);
+        contactUsViewModel.getText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

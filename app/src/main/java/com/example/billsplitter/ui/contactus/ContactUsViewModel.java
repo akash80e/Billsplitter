@@ -1,16 +1,16 @@
-package com.example.billsplitter.ui.settings;
+package com.example.billsplitter.ui.contactus;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class SettingsViewModel extends ViewModel {
+public class ContactUsViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public SettingsViewModel() {
+    public ContactUsViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is settings fragment");
+        mText.setValue("You can contact us at our email id billsplitter@gmail.com");
     }
 
     public LiveData<String> getText() {
