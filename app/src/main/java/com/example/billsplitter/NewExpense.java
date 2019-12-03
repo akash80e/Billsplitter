@@ -133,7 +133,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
             }
         }
         PaidList = new ArrayList<>();
-
+        PaidBy = "You";
         adapter = new ArrayAdapter<>(
                 NewExpense.this, android.R.layout.simple_list_item_1, friendsAndGroups);
 
@@ -268,65 +268,6 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         });
     }
 
-    /*@Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
-                Uri selectedImage = data.getData();
-
-                String filePath = getPath(selectedImage);
-                String file_extn = filePath.substring(filePath.lastIndexOf(".") + 1);
-                //image_name_tv.setText(filePath);
-
-                try {
-                    if (file_extn.equals("img") || file_extn.equals("jpg") || file_extn.equals("jpeg") || file_extn.equals("gif") || file_extn.equals("png")) {
-
-                    } else {
-                        throw new FileNotFoundException();
-                    }
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }
-        else if (requestCode == 2 && resultCode == Activity.RESULT_OK){
-
-            // Get the URI and query the content provider for the phone number
-            Uri contactUri = data.getData();
-            String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER};
-            Cursor cursor = getApplicationContext().getContentResolver().query(contactUri, projection,
-                    null, null, null);
-
-            // If the cursor returned is valid, get the phone number
-            if (cursor != null && cursor.moveToFirst()) {
-                int numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-                int nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-                System.out.println(numberIndex);
-                System.out.println(nameIndex);
-                String number = cursor.getString(0);
-                //String name = cursor.getString(1);
-                friendPhoneNumber = number;
-                //friendName = name;
-                System.out.println("Friend Phone Number " + friendPhoneNumber);
-            }
-            cursor.close();
-        }
-    }*/
-
-    public String getPath(Uri uri) {
-        int column_index;
-        String imagePath;
-        String[] projection = {MediaStore.MediaColumns.DATA};
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        column_index = cursor
-                .getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        cursor.moveToFirst();
-        imagePath = cursor.getString(column_index);
-        return cursor.getString(column_index);
-    }
-
 
     private void addExpenseToDb(String desc, String amount, final String friendID){
         Double splitAmount;
@@ -335,7 +276,9 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
         final String groupName = sList.getSelectedItem().toString();
         final DecimalFormat df = new DecimalFormat("#.##");
 
-         PaidBy = selected;
+        if (selected != null)
+            PaidBy = selected;
+
         if (PaidBy.equals("You")){
             PaidBy = UserID;
         }
