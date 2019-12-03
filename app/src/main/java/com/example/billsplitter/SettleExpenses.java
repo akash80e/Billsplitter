@@ -73,12 +73,6 @@ public class SettleExpenses extends AppCompatActivity {
                                 amt = amt + Double.parseDouble(indi.getValue().toString());
                             }
                         }
-                        for(DataSnapshot group : unit.child("group_expenses").getChildren()){
-                            if(group.getKey().equals(friend_id)){
-                                amt = amt + Double.parseDouble(group.getValue().toString());
-                            }
-                        }
-
                     }
                 }
                 if(amt == 0.0)
@@ -94,9 +88,7 @@ public class SettleExpenses extends AppCompatActivity {
 
             }
         });
-
-      //  userEmail.setText(user_email);
-
+        
         settleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,17 +105,8 @@ public class SettleExpenses extends AppCompatActivity {
                                         databaseReference.child(unit.getKey()).child("individual_expenses").child(indi.getKey()).setValue("0.0");
                                     }
                                 }
-                                for(DataSnapshot group : unit.child("group_expenses").getChildren()){
-                                    if(group.getKey().equals(friend_id)){
-                                       // amt = amt + Double.parseDouble(group.getValue().toString());
-                                        databaseReference.child(unit.getKey()).child("group_expenses").child(group.getKey()).setValue("0.0");
-                                    }
-                                }
-
                             }
                         }
-
-
                         for (DataSnapshot unit : dataSnapshot.getChildren()){
                             if(unit.getKey().equals(friend_id)){
                                 for(DataSnapshot indi : unit.child("individual_expenses").getChildren()){
@@ -132,17 +115,8 @@ public class SettleExpenses extends AppCompatActivity {
                                         databaseReference.child(unit.getKey()).child("individual_expenses").child(indi.getKey()).setValue("0.0");
                                     }
                                 }
-                                for(DataSnapshot group : unit.child("group_expenses").getChildren()){
-                                    if(group.getKey().equals(my_id)){
-                                       // amt = amt + Double.parseDouble(group.getValue().toString());
-                                        databaseReference.child(unit.getKey()).child("group_expenses").child(group.getKey()).setValue("0.0");
-                                    }
-                                }
-
                             }
                         }
-
-
                     }
 
                     @Override
