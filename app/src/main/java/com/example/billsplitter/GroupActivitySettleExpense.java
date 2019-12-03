@@ -76,18 +76,10 @@ public class GroupActivitySettleExpense extends AppCompatActivity {
                                 for(DataSnapshot user:indi.getChildren()){
                                     if(user.getKey().equals(friend_id)){
                                         amt = amt + Double.parseDouble(String.valueOf(user.getValue()));
-                                       // databaseReference.child(unit.getKey()).child("group_expense").child(indi.getKey()).child(user.getKey()).setValue("0.0");
-
                                     }
                                 }
                             }
                         }
-//                        for(DataSnapshot group : unit.child("group_expenses").getChildren()){
-//                            if(group.getKey().equals(friend_id)){
-//                                amt = amt + Double.parseDouble(group.getValue().toString());
-//                            }
-//                        }
-
                     }
                 }
                 if(amt == 0.0)
@@ -112,35 +104,9 @@ public class GroupActivitySettleExpense extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-//                        for (DataSnapshot unit : dataSnapshot.getChildren()){
-//                            if(unit.getKey().equals(my_id)){
-//                                for(DataSnapshot indi : unit.child("group_expense").getChildren()){
-//                                    if(indi.getKey().equals(group)){
-//                                        for(DataSnapshot user:indi.getChildren()){
-//                                            if(user.getKey().equals(friend_id)){
-//                                                databaseReference.child(unit.getKey()).child("individual_expenses").child(indi.getKey()).setValue("0.0");
-//                                            }
-//                                        }
-//                                        // amt = amt + Double.parseDouble(indi.getValue().toString());
-//                                    }
-//                                }
-//                            }
-//                        }
+
                         databaseReference.child(my_id).child("group_expenses").child(group).child(friend_id).setValue("0.0");
                         databaseReference.child(friend_id).child("group_expenses").child(group).child(my_id).setValue("0.0");
-
-//                        for (DataSnapshot unit : dataSnapshot.getChildren()){
-//                            if(allMembers.contains(unit.getKey())){
-//                                for(DataSnapshot indi : unit.child("group_expense").getChildren()){
-//                                    if(indi.getKey().equals(my_id)){
-//                                        // amt = amt + Double.parseDouble(indi.getValue().toString());
-//                                        databaseReference.child(unit.getKey()).child("individual_expenses").child(indi.getKey()).setValue("0.0");
-//                                    }
-//                                }
-//                            }
-//                        }
-//
-//
                  }
 
                     @Override
