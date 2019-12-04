@@ -111,17 +111,21 @@ public class GroupActivitySettleExpense extends AppCompatActivity {
 
                         databaseReference.child(my_id).child("group_expenses").child(group).child(friend_id).setValue("0.0");
                         databaseReference.child(friend_id).child("group_expenses").child(group).child(my_id).setValue("0.0");
+
+                        Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+                        startActivity(intent);
+                        databaseReference.removeEventListener(this);
                  }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
+
                 });
 
 
-                Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
-                startActivity(intent);
+
             }
 
         });

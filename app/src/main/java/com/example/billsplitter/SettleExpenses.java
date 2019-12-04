@@ -119,6 +119,10 @@ public class SettleExpenses extends AppCompatActivity {
                                 }
                             }
                         }
+
+                        Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+                        startActivity(intent);
+                        databaseReference.removeEventListener(this);
                     }
 
                     @Override
@@ -128,8 +132,7 @@ public class SettleExpenses extends AppCompatActivity {
                 });
 
 
-                Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
-                startActivity(intent);
+
             }
 
         });
