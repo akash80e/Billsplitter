@@ -243,7 +243,6 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                 String desc = etDescription.getText().toString();
                 String amount = etAmount.getText().toString();
 
-
                 if (desc.isEmpty() || amount.isEmpty()){
                     if (desc.isEmpty()){
                         etDescription.setError("Please fill the bill description");

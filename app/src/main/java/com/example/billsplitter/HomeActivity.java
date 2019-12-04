@@ -42,6 +42,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import static com.example.billsplitter.MainActivity.getNameFromUserID;
+
 public class HomeActivity extends AppCompatActivity{
     private AppBarConfiguration mAppBarConfiguration;
     private DatabaseReference UserTable;
@@ -173,10 +175,16 @@ public class HomeActivity extends AppCompatActivity{
                 builder.setPositiveButton("Add Friend", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String name = editText.getText().toString();
-                        addFriendToDb(name);
-                        addFriendExpensestoDb(name);
-                        Intent intent = new Intent(HomeActivity.this, HomeActivity.class);
-                        startActivity(intent);
+                        if (getNameFromUserID(name).equals("")){
+                            Toast.makeText(getApplicationContext(), "Please add a valid username", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            addFriendToDb(name);
+                            addFriendExpensestoDb(name);
+                            Intent intent = new Intent(HomeActivity.this, HomeActivity.class);
+                            startActivity(intent);
+                        }
+
                     }
                 });
                 builder.setView(view);

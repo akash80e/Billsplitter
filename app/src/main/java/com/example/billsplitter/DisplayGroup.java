@@ -43,6 +43,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import static com.example.billsplitter.MainActivity.getNameFromUserID;
+
 public class DisplayGroup extends AppCompatActivity {
 
     private TextView groupName;
@@ -89,7 +91,7 @@ public class DisplayGroup extends AppCompatActivity {
 
                                     if(userGroup.getKey().equals(group)){
                                         for(DataSnapshot members:userGroup.getChildren()){
-                                            groupsMembers.add(MainActivity.getNameFromUserID(members.getKey()));
+                                            groupsMembers.add(getNameFromUserID(members.getKey()));
                                             amounts.add(members.getValue().toString());
                                             memberID.add(members.getKey());
                                         }
@@ -154,53 +156,59 @@ public class DisplayGroup extends AppCompatActivity {
                 builder.setPositiveButton("Add Friend", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         final String friend_id = editText.getText().toString();
-                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for(DataSnapshot unit: dataSnapshot.getChildren()){
-                                    if( (unit.getKey().equals(my_id)) ||  (memberID.contains(unit.getKey()))){
-                                        for(DataSnapshot groups:unit.getChildren()){
-                                            if(groups.getKey().equals("group_expenses")){
-                                                for(DataSnapshot userGroup:groups.getChildren()){
 
-                                                    if(userGroup.getKey().equals(group)){
-                                                        databaseReference.child(unit.getKey()).child("group_expenses").child(group).child(friend_id).setValue("0.0");
+                        if (getNameFromUserID(friend_id).equals("")){
+                            Toast.makeText(getApplicationContext(), "Please add a valid username", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for(DataSnapshot unit: dataSnapshot.getChildren()){
+                                        if( (unit.getKey().equals(my_id)) ||  (memberID.contains(unit.getKey()))){
+                                            for(DataSnapshot groups:unit.getChildren()){
+                                                if(groups.getKey().equals("group_expenses")){
+                                                    for(DataSnapshot userGroup:groups.getChildren()){
+
+                                                        if(userGroup.getKey().equals(group)){
+                                                            databaseReference.child(unit.getKey()).child("group_expenses").child(group).child(friend_id).setValue("0.0");
+                                                        }
                                                     }
-                                                }
 
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
 
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-                        });
-                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                for(DataSnapshot unit: dataSnapshot.getChildren()){
-                                    if(unit.getKey().equals(friend_id)){
-                                        for(int i = 0; i < memberID.size(); i++){
-                                            databaseReference.child(unit.getKey()).child("group_expenses").child(group).child(memberID.get(i)).setValue("0.0");
+                                }
+                            });
+                            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for(DataSnapshot unit: dataSnapshot.getChildren()){
+                                        if(unit.getKey().equals(friend_id)){
+                                            for(int i = 0; i < memberID.size(); i++){
+                                                databaseReference.child(unit.getKey()).child("group_expenses").child(group).child(memberID.get(i)).setValue("0.0");
+                                            }
                                         }
                                     }
                                 }
-                            }
+                                
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                                }
+                            });
+                            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+                            startActivity(intent);
+                        }
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-                        Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
-                        startActivity(intent);
-                    }
                 });
                 builder.setView(new_view);
                 AlertDialog mDialog = builder.create();

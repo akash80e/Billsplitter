@@ -75,11 +75,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
         String UserID = sp.getString("UserId", null);
 
-        holder.expenseDesc.setText(getNameFromUserID(paid) + " added a new expense for " + Item);
 
+        holder.expenseDesc.setText(getNameFromUserID(paid) + " added a new expense for " + Item);
         if (paid.equals(UserID))
         {
-            holder.expensePayment.setText(getNameFromUserID(paid) + " owes you " + dAmount);
+
+            holder.expensePayment.setText("You paid " + dAmount);
         }
         else {
 
