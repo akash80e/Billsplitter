@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/bill_splitter_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DisplayImage"></activity>
+        <activity android:name=".DisplayImage" android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".DisplayGroup" />
         <activity android:name=".GroupActivitySettleExpense" />
         <activity

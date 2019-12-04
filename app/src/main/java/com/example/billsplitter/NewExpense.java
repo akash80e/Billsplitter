@@ -91,6 +91,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
     private String amountFinal;
     private final int CAMERA_SELECTED = 0, GALLERY_SELECTED = 1;
     private boolean isImageSet = false;
+    private String uniqueId;
     BottomSheetDialog mBottomSheetDialog;
     FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
     StorageReference storageReference = firebaseStorage.getReference();
@@ -260,11 +261,16 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                     return;
                 }
 
+                uniqueId = "";
+                if (isImageSet == true) {
+                    uniqueId = new GenerateUniqueId().getUniqueId();
+                }
+
                 if (checkUser(selectedFriendOrGroup)){
-                    addExpenseToDb(desc, amount, getIdFromUserName(selectedFriendOrGroup) );
+                    addExpenseToDb(desc, amount, getIdFromUserName(selectedFriendOrGroup), uniqueId);
                 }
                 else {
-                    addExpenseToDb(desc, amount,"");
+                    addExpenseToDb(desc, amount,"", uniqueId);
                 }
 
                 if (isImageSet == true) {
@@ -287,7 +293,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
     }
 
    //adding expense to database
-    private void addExpenseToDb(String desc, String amount, final String friendID){
+    private void addExpenseToDb(String desc, String amount, final String friendID, String uniqueId){
         Double splitAmount;
         int number = 0;
 
@@ -330,7 +336,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                 you = "-" + amountFinal;
             }
         }
-        addExpenseToActivity(desc, PaidBy, amountFinal);
+        addExpenseToActivity(desc, PaidBy, amountFinal, amount, uniqueId);
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -439,7 +445,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
     }
 
     //method for adding expense to activity
-    private void addExpenseToActivity(final String desc, final String paidBy, final String amount){
+    private void addExpenseToActivity(final String desc, final String paidBy, final String amountSplit, final String amountFull, final String uniqueId){
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         final String expenseID = getUniqueId();
@@ -451,13 +457,26 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
                 for (DataSnapshot unit : dataSnapshot.getChildren()){
                     if (unit.getKey().equals(UserID)){
                         ActivityTable.child(unit.getKey()).child(expenseID).child("desc").setValue(desc);
-                        ActivityTable.child(unit.getKey()).child(expenseID).child("amount").setValue(amount);
+                        if (paidBy.equals(UserID)){
+                            ActivityTable.child(unit.getKey()).child(expenseID).child("amount").setValue(amountFull);
+                        }
+                        else{
+                            ActivityTable.child(unit.getKey()).child(expenseID).child("amount").setValue(amountSplit);
+                        }
                         ActivityTable.child(unit.getKey()).child(expenseID).child("paidBy").setValue(paidBy);
+                        ActivityTable.child(unit.getKey()).child(expenseID).child("imageId").setValue(uniqueId);
                     }
                     else if (PaidList.contains(getNameFromUserID(unit.getKey()))){
                         ActivityTable.child(unit.getKey()).child(expenseID).child("desc").setValue(desc);
-                        ActivityTable.child(unit.getKey()).child(expenseID).child("amount").setValue(amount);
+                        if (paidBy.equals(unit.getKey())){
+                            ActivityTable.child(unit.getKey()).child(expenseID).child("amount").setValue(amountFull);
+                        }
+                        else{
+                            ActivityTable.child(unit.getKey()).child(expenseID).child("amount").setValue(amountSplit);
+                        }
                         ActivityTable.child(unit.getKey()).child(expenseID).child("paidBy").setValue(paidBy);
+                        ActivityTable.child(unit.getKey()).child(expenseID).child("imageId").setValue(uniqueId);
+
                     }
                 }
             }
@@ -531,7 +550,7 @@ public class NewExpense extends AppCompatActivity implements ShakeDetector.Liste
 
     //method for uploading image to firebase
     private void uploadImageToFirebase(){
-        String imageName = StringUtils.join(new GenerateUniqueId().getUniqueId(), ".jpeg");
+        String imageName = StringUtils.join(uniqueId, ".jpeg");
         StorageReference newImageRef = expenseImagesRef.child(imageName);
         expenseImage.setDrawingCacheEnabled(true);
         expenseImage.buildDrawingCache();
